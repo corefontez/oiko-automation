@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Oiko Automation — Automação inteligente com IA para negócios modernos. Reduza custos, economize tempo e aumente resultados.">
+  <meta property="og:title" content="Oiko Automation — IA que trabalha por você">
+  <meta property="og:description" content="Automatizamos processos, atendimento e vendas com sistemas inteligentes feitos para reduzir custos e aumentar resultados.">
+  <meta property="og:type" content="website">
+  <title>Oiko Automation — Automação Inteligente com IA</title>
+
+  <!-- Fonte: Satoshi via Fontshare -->
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700,800&display=swap" rel="stylesheet">
+
+  <!-- Design System -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+
+  <style>
+    /* ── HERO VISUAL (nós + conexões) ───────── */
+    .hero-visual {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .hero-node {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: node-float 6s ease-in-out infinite;
+    }
+
+    .hero-node::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border-color);
+    }
+
+    .hero-node.active::after {
+      background: var(--color-primary);
+      box-shadow: 0 0 8px rgba(234, 88, 12, 0.6);
+    }
+
+    .hero-node:nth-child(1) { top: 18%; right: 12%; animation-delay: 0s; }
+    .hero-node:nth-child(2) { top: 35%; right: 20%; animation-delay: 1.2s; }
+    .hero-node:nth-child(3) { top: 55%; right: 8%;  animation-delay: 0.6s; }
+    .hero-node:nth-child(4) { top: 70%; right: 25%; animation-delay: 1.8s; }
+    .hero-node:nth-child(5) { top: 25%; right: 32%; animation-delay: 0.9s; }
+    .hero-node:nth-child(6) { top: 80%; right: 40%; animation-delay: 2.4s; }
+
+    @keyframes node-float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-10px); }
+    }
+
+    @media (max-width: 1024px) {
+      .hero-visual { display: none; }
+    }
+
+    /* ── SERVICES GRID LAYOUT ────────────────── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-container);
+      overflow: hidden;
+    }
+
+    .service-card {
+      background: var(--bg-secondary);
+      padding: var(--space-8);
+      transition:
+        background var(--transition-md),
+        box-shadow var(--transition-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(234, 88, 12, 0.04), transparent 60%);
+      opacity: 0;
+      transition: opacity var(--transition-md);
+    }
+
+    .service-card:hover {
+      background: rgba(29, 33, 43, 0.95);
+    }
+
+    .service-card:hover::after {
+      opacity: 1;
+    }
+
+    .service-num {
+      font-size: var(--caption);
+      font-weight: var(--fw-semibold);
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      position: absolute;
+      top: var(--space-6);
+      right: var(--space-6);
+      z-index: 1;
+    }
+
+    @media (max-width: 1024px) {
+      .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── PROCESS LINHA ────────────────────── */
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-8);
+      position: relative;
+    }
+
+    .process-grid::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: calc(16.66% + var(--space-8));
+      right: calc(16.66% + var(--space-8));
+      height: 1px;
+      background: linear-gradient(90deg,
+        var(--color-primary),
+        var(--border-color),
+        var(--color-primary)
+      );
+    }
+
+    @media (max-width: 768px) {
+      .process-grid {
+        grid-template-columns: 1fr;
+      }
+      .process-grid::before {
+        display: none;
+      }
+    }
+
+    /* ── STATS GRID ────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-container);
+      overflow: hidden;
+      margin-top: var(--space-16);
+    }
+
+    .stat-cell {
+      background: var(--bg-secondary);
+      padding: var(--space-8) var(--space-6);
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* ── FAQ LAYOUT ──────────────────────────── */
+    .faq-layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: var(--space-20);
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .faq-layout {
+        grid-template-columns: 1fr;
+        gap: var(--space-10);
+      }
+    }
+
+    /* ── HERO BADGE AREA ─────────────────────── */
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    /* ── BENEFITS LAYOUT ─────────────────────── */
+    .benefits-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-20);
+      align-items: center;
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4);
+      padding: var(--space-6) 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .benefit-item:last-child {
+      border-bottom: none;
+    }
+
+    .benefit-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(234, 88, 12, 0.10);
+      border: 1px solid rgba(234, 88, 12, 0.20);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--color-primary);
+      margin-top: 2px;
+    }
+
+    .benefit-text h4 {
+      font-size: var(--body-l);
+      font-weight: var(--fw-semibold);
+      letter-spacing: -0.008em;
+      color: var(--text-primary);
+      margin-bottom: var(--space-1);
+    }
+
+    .benefit-text p {
+      font-size: var(--body-m);
+      color: var(--text-secondary);
+      line-height: var(--lh-body-m);
+    }
+
+    @media (max-width: 1024px) {
+      .benefits-layout {
+        grid-template-columns: 1fr;
+        gap: var(--space-10);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════════════ -->
+  <nav class="navbar" id="navbar" role="navigation" aria-label="Menu principal">
+
+    <a href="/" class="navbar-logo" aria-label="Oiko Automation">
+      oiko<span>.</span>
+    </a>
+
+    <ul class="navbar-links" id="navLinks" role="list">
+      <li><a href="#services">Serviços</a></li>
+      <li><a href="#process">Processo</a></li>
+      <li><a href="#benefits">Benefícios</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+
+    <div class="navbar-actions" id="navActions">
+      <a href="#contact" class="btn btn-primary btn-sm">
+        Fale conosco
+      </a>
+    </div>
+
+    <button
+      class="navbar-toggle"
+      id="navToggle"
+      aria-label="Abrir menu"
+      aria-expanded="false"
+      aria-controls="navLinks"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+  </nav>
+
+
+  <!-- ══════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════ -->
+  <section class="hero" id="home" aria-label="Hero">
+
+    <!-- Background visual -->
+    <div class="hero-bg-dots" aria-hidden="true"></div>
+    <div class="hero-bg-glow" aria-hidden="true"></div>
+
+    <!-- Nós decorativos (desktop) -->
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-node"></div>
+      <div class="hero-node active"></div>
+      <div class="hero-node"></div>
+      <div class="hero-node active"></div>
+      <div class="hero-node"></div>
+      <div class="hero-node"></div>
+    </div>
+
+    <div class="container">
+      <div class="hero-content">
+
+        <!-- Badge -->
+        <div class="hero-meta">
+          <span class="badge">
+            <span class="badge-dot" aria-hidden="true"></span>
+            Automação com IA para negócios modernos
+          </span>
+        </div>
+
+        <!-- Título principal — COPY PLACEHOLDER -->
+        <h1 class="display-xl reveal" style="max-width: 800px; margin-bottom: var(--space-6);">
+          Transforme sua operação<br>
+          com <span style="color: var(--color-primary);">Inteligência Artificial</span>
+        </h1>
+
+        <!-- Descrição — COPY PLACEHOLDER -->
+        <p class="body-xl text-secondary reveal reveal-delay-1" style="max-width: 600px; margin-bottom: var(--space-10);">
+          Automatizamos processos, atendimento e vendas com sistemas inteligentes feitos para reduzir custos, economizar tempo e aumentar resultados.
+        </p>
+
+        <!-- CTAs -->
+        <div class="hero-actions reveal reveal-delay-2">
+          <a href="#contact" class="btn btn-primary btn-lg">
+            Agendar diagnóstico gratuito
+            <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+          <a href="#services" class="btn btn-secondary btn-lg">
+            Ver serviços
+          </a>
+        </div>
+
+        <!-- Stats -->
+        <div class="hero-stats-row reveal reveal-delay-3">
+          <div>
+            <div class="stat-value">3<span class="accent">x</span></div>
+            <div class="stat-label">mais produtividade</div>
+          </div>
+          <div>
+            <div class="stat-value">60<span class="accent">%</span></div>
+            <div class="stat-label">redução de custos</div>
+          </div>
+          <div>
+            <div class="stat-value">24<span class="accent">h</span></div>
+            <div class="stat-label">atendimento automatizado</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       SERVIÇOS
+  ══════════════════════════════════════════ -->
+  <section class="section section-alt" id="services" aria-labelledby="services-title">
+    <div class="container">
+
+      <div class="section-header" style="margin-bottom: var(--space-12);">
+        <span class="eyebrow reveal">Nossos serviços</span>
+        <h2 class="section-title heading-2 reveal reveal-delay-1" id="services-title">
+          Automação para cada etapa<br>do seu negócio
+        </h2>
+        <p class="section-desc body-l reveal reveal-delay-2">
+          Soluções desenvolvidas para empresas que querem crescer com eficiência — sem aumentar o time.
+        </p>
+      </div>
+
+      <div class="services-grid reveal reveal-delay-1">
+
+        <!-- 01 -->
+        <article class="service-card">
+          <span class="service-num" aria-hidden="true">01</span>
+          <div class="card-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+          </div>
+          <h3 class="card-title">Atendimento por IA</h3>
+          <p class="card-desc">Agentes inteligentes que respondem seus clientes via WhatsApp e site — 24h por dia, sem pausas nem erros.</p>
+        </article>
+
+        <!-- 02 -->
+        <article class="service-card">
+          <span class="service-num" aria-hidden="true">02</span>
+          <div class="card-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+          </div>
+          <h3 class="card-title">Pré-venda Automatizada</h3>
+          <p class="card-desc">SDRs com IA que qualificam leads antes do seu time comercial agir — mais conversão, menos tempo desperdiçado.</p>
+        </article>
+
+        <!-- 03 -->
+        <article class="service-card">
+          <span class="service-num" aria-hidden="true">03</span>
+          <div class="card-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <h3 class="card-title">Agendamento Inteligente</h3>
+          <p class="card-desc">IA que agenda consultas e serviços automaticamente para clínicas, prestadores e empresas de serviço.</p>
+        </article>
+
+        <!-- 04 -->
+        <article class="service-card">
+          <span class="service-num" aria-hidden="true">04</span>
+          <div class="card-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <h3 class="card-title">Follow-up de Leads</h3>
+          <p class="card-desc">Acompanhamento automático de prospects para evitar perda de receita e manter o pipeline sempre ativo.</p>
+        </article>
+
+        <!-- 05 -->
+        <article class="service-card">
+          <span class="service-num" aria-hidden="true">05</span>
+          <div class="card-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+            </svg>
+          </div>
+          <h3 class="card-title">Automação de Processos</h3>
+          <p class="card-desc">Integração entre sistemas internos para eliminar trabalho repetitivo, reduzir erros e liberar seu time.</p>
+        </article>
+
+        <!-- 06 -->
+        <article class="service-card">
+          <span class="service-num" aria-hidden="true">06</span>
+          <div class="card-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+            </svg>
+          </div>
+          <h3 class="card-title">Agentes IA Avançados</h3>
+          <p class="card-desc">Sistemas integrados para automações complexas que combinam múltiplas ferramentas e fontes de dados.</p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       PROCESSO
+  ══════════════════════════════════════════ -->
+  <section class="section" id="process" aria-labelledby="process-title">
+    <div class="container">
+
+      <div class="section-header reveal" style="margin-bottom: var(--space-16);">
+        <span class="eyebrow">Como funciona</span>
+        <h2 class="section-title heading-2" id="process-title">
+          Três etapas para transformar<br>seu negócio
+        </h2>
+      </div>
+
+      <div class="process-grid">
+
+        <div class="reveal">
+          <div class="step-number">01</div>
+          <h3 class="step-title">Diagnóstico &amp; Análise</h3>
+          <p class="step-desc">Mapeamos seus processos, identificamos gargalos e encontramos as oportunidades de automação com maior impacto no seu negócio.</p>
+        </div>
+
+        <div class="reveal reveal-delay-2">
+          <div class="step-number">02</div>
+          <h3 class="step-title">Desenvolvimento &amp; Testes</h3>
+          <p class="step-desc">Desenvolvemos as automações com IA, integramos com suas ferramentas e testamos cada fluxo com rigor antes de ir ao ar.</p>
+        </div>
+
+        <div class="reveal reveal-delay-4">
+          <div class="step-number">03</div>
+          <h3 class="step-title">Implementação &amp; Otimização</h3>
+          <p class="step-desc">Colocamos tudo em produção, treinamos seu time e monitoramos continuamente para garantir os melhores resultados.</p>
+        </div>
+
+      </div>
+
+      <!-- Stats row -->
+      <div class="stats-grid reveal">
+        <div class="stat-cell">
+          <div class="stat-value">−65<span class="accent">%</span></div>
+          <div class="stat-label">custos operacionais</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-value">3<span class="accent">x</span></div>
+          <div class="stat-label">mais produtividade</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-value">−90<span class="accent">%</span></div>
+          <div class="stat-label">tempo de resposta</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-value">+40<span class="accent">%</span></div>
+          <div class="stat-label">conversão de leads</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       BENEFÍCIOS
+  ══════════════════════════════════════════ -->
+  <section class="section section-alt" id="benefits" aria-labelledby="benefits-title">
+    <div class="container">
+      <div class="benefits-layout">
+
+        <!-- Texto -->
+        <div>
+          <span class="eyebrow reveal">Por que automatizar</span>
+          <h2 class="section-title heading-2 reveal reveal-delay-1" id="benefits-title" style="margin-top: var(--space-4);">
+            Resultados reais<br>para sua empresa
+          </h2>
+          <p class="body-l text-secondary reveal reveal-delay-2" style="margin-top: var(--space-4); max-width: 480px; line-height: var(--lh-body-l);">
+            Nossos clientes transformam dados em decisões mais inteligentes e liberam o time para o que realmente importa: crescer.
+          </p>
+
+          <div style="margin-top: var(--space-8);">
+            <div class="benefit-item reveal reveal-delay-1">
+              <div class="benefit-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+                </svg>
+              </div>
+              <div class="benefit-text">
+                <h4>Reduza custos operacionais</h4>
+                <p>Menos horas em tarefas repetitivas. Seu time foca no que gera valor real.</p>
+              </div>
+            </div>
+
+            <div class="benefit-item reveal reveal-delay-2">
+              <div class="benefit-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>
+              </div>
+              <div class="benefit-text">
+                <h4>Decisões baseadas em dados</h4>
+                <p>Transforme informações em ações estratégicas com relatórios automáticos e inteligentes.</p>
+              </div>
+            </div>
+
+            <div class="benefit-item reveal reveal-delay-3">
+              <div class="benefit-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+              </div>
+              <div class="benefit-text">
+                <h4>Aumento de produtividade</h4>
+                <p>Processos que levavam horas passam a acontecer em minutos, com mais precisão.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metric card -->
+        <div class="reveal reveal-delay-2">
+          <div class="metric-card">
+            <p class="label-text text-muted" style="margin-bottom: var(--space-6);">Impacto médio por cliente</p>
+
+            <div class="metric-row">
+              <span class="metric-label">Redução de custos</span>
+              <div class="metric-bar-track">
+                <div class="metric-bar-fill" data-width="65"></div>
+              </div>
+              <span class="metric-value">−65%</span>
+            </div>
+
+            <div class="metric-row">
+              <span class="metric-label">Produtividade</span>
+              <div class="metric-bar-track">
+                <div class="metric-bar-fill" data-width="80"></div>
+              </div>
+              <span class="metric-value">+3x</span>
+            </div>
+
+            <div class="metric-row">
+              <span class="metric-label">Tempo de resposta</span>
+              <div class="metric-bar-track">
+                <div class="metric-bar-fill" data-width="90"></div>
+              </div>
+              <span class="metric-value">−90%</span>
+            </div>
+
+            <div class="metric-row">
+              <span class="metric-label">Conversão de leads</span>
+              <div class="metric-bar-track">
+                <div class="metric-bar-fill" data-width="40"></div>
+              </div>
+              <span class="metric-value">+40%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       FAQ
+  ══════════════════════════════════════════ -->
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="container">
+      <div class="faq-layout">
+
+        <!-- Lado esquerdo -->
+        <div>
+          <span class="eyebrow reveal">Dúvidas</span>
+          <h2 class="section-title heading-2 reveal reveal-delay-1" id="faq-title" style="margin-top: var(--space-4);">
+            Perguntas<br>frequentes
+          </h2>
+          <p class="body-m text-secondary reveal reveal-delay-2" style="margin-top: var(--space-4); line-height: var(--lh-body-l);">
+            Tem mais dúvidas?
+            <a href="#contact" style="color: var(--color-primary); font-weight: var(--fw-medium);">Fale com a gente →</a>
+          </p>
+        </div>
+
+        <!-- Accordion -->
+        <div class="faq-list reveal reveal-delay-1" role="list">
+
+          <div class="faq-item" role="listitem">
+            <button class="faq-trigger" aria-expanded="false">
+              Quanto tempo leva para implementar uma automação?
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              </span>
+            </button>
+            <div class="faq-content" role="region">
+              <div class="faq-body">
+                Depende da complexidade. Automações simples, como atendimento via WhatsApp, ficam prontas em 5 a 10 dias úteis. Projetos mais complexos com integração de múltiplos sistemas levam de 3 a 6 semanas. Sempre começamos com um diagnóstico para definir o prazo exato.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item" role="listitem">
+            <button class="faq-trigger" aria-expanded="false">
+              Preciso ter conhecimento técnico para usar as automações?
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              </span>
+            </button>
+            <div class="faq-content" role="region">
+              <div class="faq-body">
+                Não. Desenvolvemos tudo pensando na facilidade de uso do seu time. Oferecemos treinamento completo durante a implementação e suporte contínuo para garantir que todos operem as ferramentas com confiança.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item" role="listitem">
+            <button class="faq-trigger" aria-expanded="false">
+              As automações funcionam com as ferramentas que já uso?
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              </span>
+            </button>
+            <div class="faq-content" role="region">
+              <div class="faq-body">
+                Sim. Integramos com as principais ferramentas: WhatsApp Business, Google Workspace, CRMs (HubSpot, Pipedrive, RD Station), ERPs, planilhas e muito mais. No diagnóstico inicial mapeamos o seu stack completo.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item" role="listitem">
+            <button class="faq-trigger" aria-expanded="false">
+              Como é feita a segurança dos dados?
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              </span>
+            </button>
+            <div class="faq-content" role="region">
+              <div class="faq-body">
+                Segurança é prioridade. Todos os dados são criptografados em trânsito e em repouso. Seguimos as diretrizes da LGPD e utilizamos apenas provedores com certificações reconhecidas. Você mantém total controle e propriedade dos seus dados.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item" role="listitem">
+            <button class="faq-trigger" aria-expanded="false">
+              Qual é o modelo de contratação?
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              </span>
+            </button>
+            <div class="faq-content" role="region">
+              <div class="faq-body">
+                Trabalhamos com projetos sob medida. Após o diagnóstico gratuito, apresentamos uma proposta personalizada com escopo, prazo e investimento. Não cobramos taxa de setup oculta — o preço apresentado é o final.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       CTA FINAL / CONTATO
+  ══════════════════════════════════════════ -->
+  <section class="section section-alt" id="contact" aria-labelledby="contact-title">
+    <div class="container">
+
+      <div class="cta-block reveal">
+        <span class="badge" style="margin-bottom: var(--space-6);">
+          <span class="badge-dot" aria-hidden="true"></span>
+          Diagnóstico gratuito
+        </span>
+
+        <!-- COPY PLACEHOLDER -->
+        <h2 class="heading-2 reveal reveal-delay-1" id="contact-title" style="margin-bottom: var(--space-4);">
+          Pronto para automatizar<br>seu negócio?
+        </h2>
+
+        <p class="body-l text-secondary reveal reveal-delay-2" style="max-width: 520px; margin: 0 auto var(--space-10); line-height: var(--lh-body-l);">
+          Agende uma conversa de 30 minutos. Analisamos seu negócio e mostramos onde a IA pode gerar mais resultado — sem compromisso.
+        </p>
+
+        <div class="reveal reveal-delay-3" style="display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap;">
+          <a href="mailto:contact@oikoautomation.com" class="btn btn-primary btn-lg">
+            Agendar diagnóstico
+            <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+          <a href="https://wa.me/5581325101820" class="btn btn-secondary btn-lg">
+            WhatsApp
+          </a>
+        </div>
+
+        <!-- Contatos -->
+        <div style="display: flex; gap: var(--space-10); justify-content: center; margin-top: var(--space-10); flex-wrap: wrap;">
+          <p class="body-s text-muted">
+            <a href="mailto:contact@oikoautomation.com" style="color: var(--text-muted); transition: color 0.18s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-muted)'">
+              contact@oikoautomation.com
+            </a>
+          </p>
+          <p class="body-s text-muted">Recife, PE — Brasil</p>
+          <p class="body-s text-muted">Resposta em até 24h úteis</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-inner">
+
+        <a href="/" class="navbar-logo" aria-label="Oiko Automation">
+          oiko<span>.</span>
+        </a>
+
+        <nav class="footer-links" aria-label="Links do rodapé">
+          <a href="#services">Serviços</a>
+          <a href="#process">Processo</a>
+          <a href="#benefits">Benefícios</a>
+          <a href="#faq">FAQ</a>
+          <a href="#contact">Contato</a>
+        </nav>
+
+        <p class="footer-copy">
+          © <span id="year"></span> Oiko Automation. Todos os direitos reservados.
+        </p>
+
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- JS -->
+  <script src="js/main.js" defer></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+</body>
+</html>
