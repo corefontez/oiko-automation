@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (navbar) {
     const onScroll = () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 20);
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
@@ -124,6 +124,123 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
+  // ─── STACK ECOSYSTEM: STAGGERED NODE ENTRY ─
+
+  const ecoContainer = document.querySelector('.eco-container');
+
+  if (ecoContainer) {
+    const nodes   = ecoContainer.querySelectorAll('.eco-node');
+    const center  = ecoContainer.querySelector('.eco-center');
+    const lines   = ecoContainer.querySelectorAll('.eco-line-travel');
+
+    // Initially hidden
+    [center, ...nodes].forEach(el => {
+      if (el) { el.style.opacity = '0'; el.style.transform += ' scale(0.7)'; }
+    });
+    lines.forEach(l => { l.style.animationPlayState = 'paused'; });
+
+    const ecoObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+
+          // Reveal center first
+          if (center) {
+            center.style.transition = 'opacity 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.5s cubic-bezier(0.16,1,0.3,1)';
+            center.style.opacity = '1';
+            center.style.transform = center.style.transform.replace(' scale(0.7)', '');
+          }
+
+          // Stagger each node
+          nodes.forEach((node, i) => {
+            setTimeout(() => {
+              node.style.transition = 'opacity 0.45s cubic-bezier(0.16,1,0.3,1), transform 0.45s cubic-bezier(0.16,1,0.3,1), border-color 0.28s, box-shadow 0.28s';
+              node.style.opacity = '1';
+              node.style.transform = node.style.transform.replace(' scale(0.7)', '');
+            }, 200 + i * 80);
+          });
+
+          // Start line animations
+          setTimeout(() => {
+            lines.forEach(l => { l.style.animationPlayState = 'running'; });
+          }, 400);
+
+          ecoObserver.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.20 }
+    );
+
+    ecoObserver.observe(ecoContainer);
+  }
+
+
+  // ─── HERO STATS: FADE-IN + COUNTER ────────
+
+  const heroStats = document.querySelectorAll('.hero-stat');
+
+  if (heroStats.length > 0) {
+    const statObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            const delay = Array.from(heroStats).indexOf(el) * 120;
+
+            setTimeout(() => {
+              el.classList.add('in-view');
+
+              const numEl = el.querySelector('.stat-num[data-count]');
+              if (!numEl) return;
+
+              const target = parseInt(numEl.getAttribute('data-count'), 10);
+              const duration = 1200;
+              const start = performance.now();
+
+              const tick = (now) => {
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+                // ease-out cubic
+                const eased = 1 - Math.pow(1 - progress, 3);
+                numEl.textContent = Math.round(eased * target);
+                if (progress < 1) requestAnimationFrame(tick);
+              };
+
+              requestAnimationFrame(tick);
+            }, delay);
+
+            statObserver.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.25, rootMargin: '0px 0px -20px 0px' }
+    );
+
+    heroStats.forEach(stat => statObserver.observe(stat));
+  }
+
+
+  // ─── ROADMAP TRACK REVEAL ──────────────────
+
+  const roadmap = document.querySelector('.roadmap');
+
+  if (roadmap) {
+    const roadmapObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            roadmapObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    roadmapObserver.observe(roadmap);
+  }
+
+
   // ─── SMOOTH SCROLL PARA ÂNCORAS ────────────
 
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -132,8 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!target) return;
 
       e.preventDefault();
-      const offset = parseInt(getComputedStyle(document.documentElement)
-        .getPropertyValue('--nav-height')) || 72;
+      const offset = navbar ? navbar.offsetHeight : 72;
 
       window.scrollTo({
         top: target.getBoundingClientRect().top + window.scrollY - offset,

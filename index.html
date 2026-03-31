@@ -20,54 +20,215 @@
   <link rel="stylesheet" href="css/layout.css">
 
   <style>
-    /* ── HERO VISUAL (nós + conexões) ───────── */
-    .hero-visual {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
+    /* ── HERO PANEL ──────────────────────────── */
+    @keyframes live-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.45; transform: scale(0.75); }
+    }
+    @keyframes ai-glow {
+      0%, 100% { box-shadow: 0 0 14px rgba(234,88,12,0.22); }
+      50%       { box-shadow: 0 0 26px rgba(234,88,12,0.42); }
+    }
+    @keyframes feed-in {
+      from { opacity: 0; transform: translateX(-6px); }
+      to   { opacity: 1; transform: translateX(0); }
     }
 
-    .hero-node {
+    .hero-panel {
+      background: rgba(29, 33, 43, 0.65);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 24px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.03) inset,
+        0 24px 64px rgba(0,0,0,0.45);
+    }
+    .hero-panel::after {
+      content: '';
       position: absolute;
-      width: 40px;
-      height: 40px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
+      bottom: -80px; right: -80px;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(234,88,12,0.10) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    /* header */
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .panel-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .panel-status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      flex-shrink: 0;
+      box-shadow: 0 0 8px rgba(34,197,94,0.5);
+      animation: live-pulse 2s ease-in-out infinite;
+    }
+    .panel-status-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+    .panel-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #22c55e;
+      background: rgba(34,197,94,0.08);
+      border: 1px solid rgba(34,197,94,0.18);
+      border-radius: 6px;
+      padding: 4px 8px;
+    }
+    .panel-live-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: live-pulse 1.6s ease-in-out infinite;
+    }
+
+    /* flow */
+    .panel-flow {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(21,24,33,0.55);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 14px;
+      padding: 14px 12px;
+      margin-bottom: 16px;
+    }
+    .flow-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+    }
+    .flow-icon {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: node-float 6s ease-in-out infinite;
+      color: var(--text-muted);
+    }
+    .flow-node--ai .flow-icon {
+      background: rgba(234,88,12,0.12);
+      border-color: rgba(234,88,12,0.28);
+      color: var(--color-primary);
+      animation: ai-glow 2.8s ease-in-out infinite;
+    }
+    .flow-node--done .flow-icon {
+      background: rgba(34,197,94,0.08);
+      border-color: rgba(34,197,94,0.18);
+      color: #22c55e;
+    }
+    .flow-node span {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.01em;
+    }
+    .flow-arrow {
+      color: rgba(255,255,255,0.15);
+      font-size: 14px;
+      flex-shrink: 0;
+      margin-bottom: 14px;
     }
 
-    .hero-node::after {
-      content: '';
-      width: 8px;
-      height: 8px;
+    /* metrics */
+    .panel-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .panel-metric {
+      background: rgba(21,24,33,0.55);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 11px;
+      padding: 11px 12px;
+    }
+    .metric-val {
+      display: block;
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .metric-lbl {
+      display: block;
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* separator */
+    .panel-sep {
+      height: 1px;
+      background: rgba(255,255,255,0.05);
+      margin-bottom: 16px;
+    }
+
+    /* activity feed */
+    .feed-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .feed-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 0;
+      animation: feed-in 0.5s var(--ease-out) both;
+    }
+    .feed-item:nth-child(2) { animation-delay: 0.1s; }
+    .feed-item:nth-child(3) { animation-delay: 0.2s; }
+    .feed-item:nth-child(4) { animation-delay: 0.3s; }
+    .feed-item + .feed-item {
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .feed-dot {
+      width: 6px; height: 6px;
       border-radius: 50%;
-      background: var(--border-color);
+      background: #22c55e;
+      flex-shrink: 0;
     }
-
-    .hero-node.active::after {
-      background: var(--color-primary);
-      box-shadow: 0 0 8px rgba(234, 88, 12, 0.6);
+    .feed-text {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      flex: 1;
+      letter-spacing: -0.005em;
     }
-
-    .hero-node:nth-child(1) { top: 18%; right: 12%; animation-delay: 0s; }
-    .hero-node:nth-child(2) { top: 35%; right: 20%; animation-delay: 1.2s; }
-    .hero-node:nth-child(3) { top: 55%; right: 8%;  animation-delay: 0.6s; }
-    .hero-node:nth-child(4) { top: 70%; right: 25%; animation-delay: 1.8s; }
-    .hero-node:nth-child(5) { top: 25%; right: 32%; animation-delay: 0.9s; }
-    .hero-node:nth-child(6) { top: 80%; right: 40%; animation-delay: 2.4s; }
-
-    @keyframes node-float {
-      0%, 100% { transform: translateY(0px); }
-      50%       { transform: translateY(-10px); }
-    }
-
-    @media (max-width: 1024px) {
-      .hero-visual { display: none; }
+    .feed-time {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
     }
 
     /* ── SERVICES GRID LAYOUT ────────────────── */
@@ -120,47 +281,532 @@
       z-index: 1;
     }
 
-    @media (max-width: 1024px) {
+    @media (max-width: 904px) {
       .services-grid {
         grid-template-columns: repeat(2, 1fr);
       }
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 599px) {
       .services-grid {
         grid-template-columns: 1fr;
       }
     }
 
-    /* ── PROCESS LINHA ────────────────────── */
-    .process-grid {
+    /* ══════════════════════════════════════════
+       PROCESSO / ROADMAP
+    ══════════════════════════════════════════ */
+
+    @keyframes node-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(234,88,12,0.55), 0 0 10px rgba(234,88,12,0.22); }
+      50%       { box-shadow: 0 0 0 7px rgba(234,88,12,0.0), 0 0 22px rgba(234,88,12,0.40); }
+    }
+
+    @keyframes node-ring {
+      0%   { transform: scale(1);   opacity: 0.55; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    @keyframes track-traveler {
+      0%         { left: 1%;  opacity: 0; }
+      4%         { opacity: 1; }
+      61%        { opacity: 1; }
+      65%, 100%  { left: 65%; opacity: 0; }
+    }
+
+    @keyframes output-blink {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.35; }
+    }
+
+    #process { overflow: hidden; position: relative; }
+
+    /* Ambient section glow */
+    #process::before {
+      content: '';
+      position: absolute;
+      top: 40%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 900px; height: 500px;
+      background: radial-gradient(ellipse at center, rgba(234,88,12,0.035) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── Roadmap wrapper ─────────────────────── */
+    .roadmap {
+      margin-top: var(--space-10);
+    }
+
+    /* ── Time axis labels ────────────────────── */
+    .roadmap-axis {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-8);
+      grid-template-columns: 1fr 1fr 1fr;
+      margin-bottom: var(--space-3);
+    }
+
+    .roadmap-axis-label {
+      text-align: center;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0.60;
+    }
+
+    /* ── Track row ───────────────────────────── */
+    .roadmap-track-row {
+      position: relative;
+      height: 30px;
+    }
+
+    .roadmap-track-line {
+      position: absolute;
+      top: 13px;
+      left: calc(100% / 6);
+      right: calc(100% / 6);
+      height: 3px;
+    }
+
+    /* Base rail */
+    .roadmap-track-line::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.06);
+      border-radius: 3px;
+    }
+
+    /* Animated progress fill */
+    .roadmap-track-line::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 65%;
+      height: 100%;
+      background: linear-gradient(90deg,
+        var(--color-primary) 0%,
+        rgba(234,88,12,0.70) 75%,
+        rgba(234,88,12,0.20) 100%);
+      border-radius: 3px;
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 1.6s cubic-bezier(0.16,1,0.3,1) 0.35s;
+    }
+
+    .roadmap.revealed .roadmap-track-line::after {
+      transform: scaleX(1);
+    }
+
+    /* Dashed upcoming section */
+    .roadmap-track-dash {
+      position: absolute;
+      top: 0;
+      left: 65%;
+      right: 0;
+      height: 100%;
+      background-image: repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,0.11) 0px,
+        rgba(255,255,255,0.11) 5px,
+        transparent 5px,
+        transparent 12px
+      );
+      border-radius: 3px;
+    }
+
+    /* Traveling glow dot */
+    .roadmap-traveler {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(234,88,12,0.90), 0 0 20px rgba(234,88,12,0.50);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .roadmap.revealed .roadmap-traveler {
+      animation: track-traveler 2.8s cubic-bezier(0.4,0,0.6,1) 2.0s infinite;
+    }
+
+    /* Milestone node slots */
+    .roadmap-track-nodes {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .roadmap-node-slot {
+      display: flex;
+      justify-content: center;
       position: relative;
     }
 
-    .process-grid::before {
-      content: '';
-      position: absolute;
-      top: 28px;
-      left: calc(16.66% + var(--space-8));
-      right: calc(16.66% + var(--space-8));
-      height: 1px;
-      background: linear-gradient(90deg,
-        var(--color-primary),
-        var(--border-color),
-        var(--color-primary)
-      );
+    .roadmap-node-dot {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      position: relative;
     }
 
-    @media (max-width: 768px) {
-      .process-grid {
+    .roadmap-node-dot--done {
+      background: var(--color-primary);
+      border: 2px solid rgba(234,88,12,0.55);
+      box-shadow:
+        0 0 0 4px rgba(234,88,12,0.09),
+        0 0 16px rgba(234,88,12,0.38);
+    }
+
+    .roadmap-node-dot--active {
+      background: var(--bg-primary);
+      border: 2px solid var(--color-primary);
+      animation: node-pulse 2.2s ease-in-out infinite;
+    }
+
+    /* Expanding ring on active node */
+    .roadmap-node-dot--active::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(234,88,12,0.45);
+      animation: node-ring 2.2s ease-out infinite;
+    }
+
+    .roadmap-node-dot--next {
+      background: var(--bg-primary);
+      border: 2px solid rgba(255,255,255,0.10);
+    }
+
+    .roadmap-node-inner {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+
+    .roadmap-node-dot--done  .roadmap-node-inner { background: rgba(255,255,255,0.95); }
+    .roadmap-node-dot--active .roadmap-node-inner {
+      background: var(--color-primary);
+      box-shadow: 0 0 7px rgba(234,88,12,0.70);
+    }
+    .roadmap-node-dot--next  .roadmap-node-inner { background: rgba(255,255,255,0.14); }
+
+    /* ── Vertical connectors ─────────────────── */
+    .roadmap-connectors {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      height: 28px;
+    }
+
+    .roadmap-connector {
+      display: flex;
+      justify-content: center;
+    }
+
+    .roadmap-connector:nth-child(1)::before,
+    .roadmap-connector:nth-child(3)::before {
+      content: '';
+      width: 1px;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(234,88,12,0.20), rgba(255,255,255,0.03));
+    }
+
+    /* Active connector — glowing */
+    .roadmap-connector:nth-child(2)::before {
+      content: '';
+      width: 1px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--color-primary), rgba(234,88,12,0.10));
+      box-shadow: 0 0 6px rgba(234,88,12,0.35);
+    }
+
+    /* ── Phase panels ────────────────────────── */
+    .roadmap-phases {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .roadmap-phase {
+      background: rgba(29,33,43,0.55);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.30s ease, box-shadow 0.30s ease, transform 0.30s ease;
+    }
+
+    /* Colored top accent strip per status */
+    .roadmap-phase::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      border-radius: 16px 16px 0 0;
+      transition: opacity 0.30s ease;
+    }
+
+    .roadmap-phase--done::before {
+      background: linear-gradient(90deg, transparent, rgba(34,197,94,0.55), transparent);
+    }
+
+    .roadmap-phase--active::before {
+      background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+    }
+
+    .roadmap-phase--next::before {
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    }
+
+    .roadmap-phase--active {
+      border-color: rgba(234,88,12,0.22);
+      background: rgba(29,33,43,0.80);
+      box-shadow:
+        0 0 0 1px rgba(234,88,12,0.04) inset,
+        0 8px 48px rgba(234,88,12,0.07);
+    }
+
+    .roadmap-phase--next {
+      opacity: 0.80;
+    }
+
+    .roadmap-phase:hover {
+      border-color: rgba(234,88,12,0.30);
+      transform: translateY(-4px);
+      box-shadow:
+        0 20px 56px rgba(0,0,0,0.32),
+        0 0 0 1px rgba(234,88,12,0.06) inset;
+      opacity: 1;
+    }
+
+    /* ── Phase header ────────────────────────── */
+    .roadmap-phase-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-6) var(--space-6) var(--space-4);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .roadmap-phase-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .roadmap-phase--active .roadmap-phase-num {
+      color: var(--color-primary);
+    }
+
+    .roadmap-phase-badge {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .roadmap-phase-badge--done {
+      color: rgba(34,197,94,0.90);
+      background: rgba(34,197,94,0.07);
+      border: 1px solid rgba(34,197,94,0.18);
+    }
+
+    .roadmap-phase-badge--active {
+      color: var(--color-primary);
+      background: rgba(234,88,12,0.08);
+      border: 1px solid rgba(234,88,12,0.24);
+    }
+
+    .roadmap-phase-badge--next {
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ── Phase body ──────────────────────────── */
+    .roadmap-phase-body {
+      padding: var(--space-6);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .roadmap-phase-title {
+      font-size: 17px;
+      font-weight: var(--fw-semibold);
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+      line-height: 1.3;
+      margin-bottom: var(--space-2);
+    }
+
+    .roadmap-phase-desc {
+      font-size: var(--body-s);
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: var(--space-4);
+      flex: 1;
+    }
+
+    /* ── Task list ───────────────────────────── */
+    .roadmap-tasks {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: var(--space-4);
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .roadmap-task {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .roadmap-task-icon {
+      width: 18px; height: 18px;
+      border-radius: 5px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .roadmap-task-icon--done {
+      background: rgba(34,197,94,0.08);
+      border: 1px solid rgba(34,197,94,0.20);
+      color: rgba(34,197,94,0.90);
+    }
+
+    .roadmap-task-icon--active {
+      background: rgba(234,88,12,0.08);
+      border: 1px solid rgba(234,88,12,0.26);
+      color: var(--color-primary);
+    }
+
+    .roadmap-task-icon--next {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.18);
+    }
+
+    .roadmap-task-label {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .roadmap-task--done   .roadmap-task-label { color: var(--text-secondary); }
+    .roadmap-task--active .roadmap-task-label { color: var(--text-primary); font-weight: 500; }
+    .roadmap-task--next   .roadmap-task-label { color: var(--text-muted); }
+
+    /* ── Phase footer (output tag) ───────────── */
+    .roadmap-phase-footer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: var(--space-4) var(--space-6);
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .roadmap-output-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .roadmap-phase--done   .roadmap-output-dot { background: rgba(34,197,94,0.65); }
+    .roadmap-phase--active .roadmap-output-dot {
+      background: var(--color-primary);
+      box-shadow: 0 0 7px rgba(234,88,12,0.55);
+      animation: output-blink 2.0s ease-in-out infinite;
+    }
+    .roadmap-phase--next   .roadmap-output-dot { background: rgba(255,255,255,0.16); }
+
+    .roadmap-output-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.01em;
+    }
+
+    /* ── Responsive ──────────────────────────── */
+    @media (max-width: 904px) {
+      .roadmap-axis,
+      .roadmap-track-row,
+      .roadmap-connectors { display: none; }
+
+      .roadmap-phases {
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+      }
+
+      .roadmap-phase--next {
+        grid-column: 1 / -1;
+        max-width: 480px;
+        margin: 0 auto;
+        width: 100%;
+        opacity: 1;
+      }
+
+      .roadmap { margin-top: var(--space-10); }
+    }
+
+    @media (max-width: 599px) {
+      .roadmap-phases {
         grid-template-columns: 1fr;
+        position: relative;
+        padding-left: 32px;
+        align-items: start;
       }
-      .process-grid::before {
-        display: none;
+
+      .roadmap-phases::before {
+        content: '';
+        position: absolute;
+        left: 10px;
+        top: 28px;
+        bottom: 28px;
+        width: 1px;
+        background: linear-gradient(to bottom,
+          rgba(234,88,12,0.70),
+          rgba(234,88,12,0.35) 60%,
+          rgba(255,255,255,0.06));
       }
+
+      .roadmap-phase::after {
+        content: '';
+        position: absolute;
+        left: -25px;
+        top: 22px;
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        background: var(--color-primary);
+        border: 2px solid var(--bg-primary);
+        box-shadow: 0 0 0 2px rgba(234,88,12,0.35);
+      }
+
+      .roadmap-phase--next::after {
+        background: var(--bg-secondary);
+        border-color: rgba(255,255,255,0.14);
+        box-shadow: none;
+      }
+
+      .roadmap-phase--next { max-width: 100%; opacity: 1; }
+      .roadmap { margin-top: var(--space-8); }
     }
 
     /* ── STATS GRID ────────────────────────── */
@@ -181,24 +827,244 @@
       text-align: center;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 599px) {
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
       }
     }
 
-    /* ── FAQ LAYOUT ──────────────────────────── */
-    .faq-layout {
+    /* ══════════════════════════════════════════
+       FAQ — PREMIUM REDESIGN
+    ══════════════════════════════════════════ */
+
+    /* Two-column layout */
+    .faq-split {
       display: grid;
-      grid-template-columns: 340px 1fr;
+      grid-template-columns: 300px 1fr;
       gap: var(--space-20);
       align-items: start;
     }
 
-    @media (max-width: 1024px) {
-      .faq-layout {
+    /* ── Left panel ─────────────────────────── */
+    .faq-left {
+      position: sticky;
+      top: calc(var(--nav-height) + 32px);
+    }
+
+    .faq-left .eyebrow {
+      margin-bottom: var(--space-4);
+    }
+
+    .faq-left .eyebrow::before { display: none; }
+
+    .faq-left-title {
+      font-size: clamp(26px, 2.6vw, var(--heading-2));
+      font-weight: var(--fw-semibold);
+      letter-spacing: var(--ls-h2);
+      line-height: 1.14;
+      color: var(--text-primary);
+      margin-bottom: var(--space-4);
+    }
+
+    .faq-left-desc {
+      font-size: var(--body-m);
+      line-height: 1.70;
+      color: var(--text-secondary);
+      letter-spacing: var(--ls-body);
+    }
+
+    .faq-support-card {
+      margin-top: var(--space-10);
+      padding: var(--space-6);
+      background: rgba(29,33,43,0.55);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius-card);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .faq-support-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(234,88,12,0.38), transparent);
+    }
+
+    .faq-support-heading {
+      font-size: 15px;
+      font-weight: var(--fw-semibold);
+      color: var(--text-primary);
+      margin-bottom: var(--space-2);
+      letter-spacing: -0.008em;
+    }
+
+    .faq-support-sub {
+      font-size: var(--body-s);
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: var(--space-4);
+    }
+
+    .faq-support-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 11px var(--space-4);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: var(--radius-button);
+      color: var(--text-primary);
+      font-family: var(--font-primary);
+      font-size: 14px;
+      font-weight: var(--fw-medium);
+      letter-spacing: -0.005em;
+      cursor: pointer;
+      text-decoration: none;
+      transition:
+        background     0.20s var(--ease-out),
+        border-color   0.20s var(--ease-out),
+        color          0.20s var(--ease-out);
+    }
+
+    .faq-support-btn:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(255,255,255,0.16);
+      color: var(--text-primary);
+    }
+
+    /* ── Right: accordion cards ─────────────── */
+
+    /* Override components.css list container */
+    .faq-right .faq-list {
+      border: none;
+      border-radius: 0;
+      overflow: visible;
+      background: transparent;
+      gap: 8px;
+    }
+
+    /* Individual card treatment */
+    .faq-right .faq-item {
+      background: rgba(29,33,43,0.55);
+      border: 1px solid rgba(255,255,255,0.07) !important;
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      transition:
+        border-color  0.24s var(--ease-out),
+        box-shadow    0.24s var(--ease-out);
+    }
+
+    /* Top shine accent */
+    .faq-right .faq-item::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      border-radius: 14px 14px 0 0;
+      background: transparent;
+      transition: background 0.26s var(--ease-out);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .faq-right .faq-item:hover {
+      border-color: rgba(255,255,255,0.12) !important;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    }
+
+    .faq-right .faq-item:has(.faq-trigger.active) {
+      border-color: rgba(234,88,12,0.22) !important;
+      box-shadow: 0 6px 32px rgba(0,0,0,0.22), 0 0 0 1px rgba(234,88,12,0.03) inset;
+    }
+
+    .faq-right .faq-item:has(.faq-trigger.active)::before {
+      background: linear-gradient(90deg, transparent, rgba(234,88,12,0.48), transparent);
+    }
+
+    /* Trigger */
+    .faq-right .faq-trigger {
+      background: transparent;
+      padding: var(--space-6);
+      font-size: 16px;
+      font-weight: var(--fw-medium);
+      letter-spacing: -0.010em;
+      color: var(--text-primary);
+      transition: color 0.18s var(--ease-out);
+    }
+
+    .faq-right .faq-trigger:hover {
+      background: transparent;
+    }
+
+    .faq-right .faq-trigger.active {
+      color: var(--text-primary);
+    }
+
+    /* Icon */
+    .faq-right .faq-icon {
+      width: 24px; height: 24px;
+      border-radius: 7px;
+      border-color: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      transition:
+        background    0.22s var(--ease-out),
+        border-color  0.22s var(--ease-out),
+        transform     0.34s cubic-bezier(0.16,1,0.3,1),
+        color         0.22s var(--ease-out);
+    }
+
+    .faq-right .faq-trigger.active .faq-icon {
+      background: rgba(234,88,12,0.10);
+      border-color: rgba(234,88,12,0.28);
+      color: var(--color-primary);
+      transform: rotate(45deg);
+    }
+
+    /* Smooth height animation via grid trick */
+    .faq-right .faq-content {
+      display: grid;
+      grid-template-rows: 0fr;
+      max-height: none !important;
+      overflow: hidden;
+      transition: grid-template-rows 0.42s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .faq-right .faq-content.open {
+      grid-template-rows: 1fr;
+      max-height: none !important;
+    }
+
+    /* Content body */
+    .faq-right .faq-body {
+      min-height: 0;
+      background: transparent;
+      padding: 0 var(--space-6) var(--space-6);
+      padding-right: calc(var(--space-6) + 28px);
+      font-size: var(--body-m);
+      line-height: 1.72;
+      color: var(--text-secondary);
+    }
+
+    /* ── Responsive ──────────────────────────── */
+    @media (max-width: 904px) {
+      .faq-split {
         grid-template-columns: 1fr;
         gap: var(--space-10);
+      }
+      .faq-left { position: static; }
+    }
+
+    @media (max-width: 599px) {
+      .faq-right .faq-trigger {
+        padding: var(--space-4) var(--space-4);
+        font-size: 15px;
+      }
+      .faq-right .faq-body {
+        padding: 0 var(--space-4) var(--space-4);
+        padding-right: var(--space-4);
       }
     }
 
@@ -211,57 +1077,971 @@
     }
 
     /* ── BENEFITS LAYOUT ─────────────────────── */
-    .benefits-layout {
+    /* ══════════════════════════════════════════
+       BENEFÍCIOS / RESULTADOS
+    ══════════════════════════════════════════ */
+
+    .ben-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto var(--space-6);
+    }
+
+    .ben-header .eyebrow {
+      padding-left: 0;
+    }
+
+    .ben-header .eyebrow::before {
+      display: none;
+    }
+
+    .ben-header .section-title {
+      margin-top: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+
+    .ben-header .section-desc {
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .ben-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .ben-card {
+      background: rgba(29, 33, 43, 0.70);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      transition: border-color 0.30s ease, transform 0.30s ease, box-shadow 0.30s ease;
+    }
+
+    .ben-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(234,88,12,0), transparent);
+      transition: background 0.30s ease;
+      z-index: 1;
+    }
+
+    .ben-card:hover {
+      border-color: rgba(234,88,12,0.28);
+      transform: translateY(-4px);
+      box-shadow:
+        0 16px 48px rgba(0,0,0,0.35),
+        0 0 0 1px rgba(234,88,12,0.06) inset;
+    }
+
+    .ben-card:hover::before {
+      background: linear-gradient(90deg, transparent, rgba(234,88,12,0.65), transparent);
+    }
+
+    .ben-illus {
+      height: 120px;
+      background: rgba(21, 24, 33, 0.80);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden;
+    }
+
+    .ben-illus::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,0.028) 1px, transparent 1px);
+      background-size: 16px 16px;
+      pointer-events: none;
+    }
+
+    .ben-illus svg {
+      position: relative;
+      z-index: 1;
+      transition: transform 0.40s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .ben-card:hover .ben-illus svg {
+      transform: translateY(-3px) scale(1.03);
+    }
+
+    .ben-body {
+      padding: var(--space-6);
+    }
+
+    .ben-card-tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--color-primary);
+      margin-bottom: var(--space-2);
+    }
+
+    .ben-card-title {
+      font-size: 17px;
+      font-weight: var(--fw-semibold);
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      margin-bottom: var(--space-2);
+      line-height: 1.35;
+    }
+
+    .ben-card-desc {
+      font-size: var(--body-s);
+      color: var(--text-secondary);
+      line-height: 1.60;
+    }
+
+    @media (max-width: 904px) {
+      .ben-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 599px) {
+      .ben-grid { grid-template-columns: 1fr; }
+      .ben-header { margin-bottom: var(--space-10); }
+    }
+
+    /* ══════════════════════════════════════════
+       STACK / ECOSYSTEM SECTION
+    ══════════════════════════════════════════ */
+
+    /* ── Section padding override ───────────── */
+    #stack {
+      padding-top: 56px;
+      padding-bottom: 56px;
+    }
+
+    /* ── Layout ─────────────────────────────── */
+    .stack-layout {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: var(--space-20);
       align-items: center;
     }
 
-    .benefit-item {
+    .stack-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .stack-content {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
+    }
+
+    /* ── Benefits list ───────────────────────── */
+    .stack-benefits {
+      display: flex;
+      flex-direction: column;
       gap: var(--space-4);
-      padding: var(--space-6) 0;
-      border-bottom: 1px solid var(--border-color);
+      margin-top: var(--space-8);
     }
 
-    .benefit-item:last-child {
-      border-bottom: none;
+    .stack-benefit {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-size: var(--body-l);
+      color: var(--text-secondary);
+      letter-spacing: -0.005em;
+      line-height: var(--lh-body-l);
     }
 
-    .benefit-icon {
-      width: 40px;
-      height: 40px;
-      background: rgba(234, 88, 12, 0.10);
-      border: 1px solid rgba(234, 88, 12, 0.20);
-      border-radius: 10px;
+    .stack-benefit-icon {
+      width: 28px;
+      height: 28px;
+      background: rgba(234, 88, 12, 0.08);
+      border: 1px solid rgba(234, 88, 12, 0.18);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+      flex-shrink: 0;
+    }
+
+    /* ── Ecosystem visual wrapper ────────────── */
+    .stack-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* ── Glass panel behind visual ───────────── */
+    .eco-panel {
+      position: relative;
+      background: rgba(19, 22, 31, 0.72);
+      border: 1px solid rgba(255,255,255,0.065);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.032) inset,
+        0 28px 80px rgba(0,0,0,0.52),
+        0 4px 16px rgba(0,0,0,0.30);
+      overflow: hidden;
+    }
+
+    /* Dot grid texture */
+    .eco-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.022) 1px, transparent 0);
+      background-size: 24px 24px;
+      mask-image: radial-gradient(ellipse 88% 88% at 50% 50%, black 20%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 88% 88% at 50% 50%, black 20%, transparent 100%);
+      pointer-events: none;
+    }
+
+    /* Top edge highlight */
+    .eco-panel::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 15%; right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+      pointer-events: none;
+    }
+
+    /* ── Eco container ───────────────────────── */
+    .eco-container {
+      position: relative;
+      width: 500px;
+      height: 500px;
+      flex-shrink: 0;
+    }
+
+    /* ── Background radial glow ──────────────── */
+    .stack-visual-bg {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 480px; height: 480px;
+      background: radial-gradient(ellipse, rgba(234,88,12,0.09) 0%, transparent 58%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── SVG lines layer ─────────────────────── */
+    .eco-lines {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: visible;
+    }
+
+    .eco-orbit-ring {
+      fill: none;
+      stroke: rgba(42, 47, 58, 0.50);
+      stroke-width: 1;
+      stroke-dasharray: 3 10;
+    }
+
+    .eco-line-base {
+      fill: none;
+      stroke-width: 1.5;
+      stroke: url(#ecoLineGrad);
+    }
+
+    @keyframes eco-dash {
+      from { stroke-dashoffset: 0; }
+      to   { stroke-dashoffset: -252; }
+    }
+
+    .eco-line-travel {
+      stroke: rgba(234, 88, 12, 0.85);
+      stroke-width: 2;
+      stroke-dasharray: 10 242;
+      stroke-dashoffset: 0;
+      fill: none;
+      animation: eco-dash 3s linear infinite;
+      filter: drop-shadow(0 0 3px rgba(234,88,12,0.70));
+    }
+
+    /* ── Central node ────────────────────────── */
+    @keyframes eco-center-pulse {
+      0%, 100% {
+        box-shadow:
+          0 0 0 0 rgba(234,88,12,0),
+          0 0 32px rgba(234,88,12,0.20),
+          0 12px 40px rgba(0,0,0,0.55),
+          inset 0 1px 0 rgba(255,255,255,0.10);
+      }
+      50% {
+        box-shadow:
+          0 0 0 16px rgba(234,88,12,0.03),
+          0 0 60px rgba(234,88,12,0.38),
+          0 12px 40px rgba(0,0,0,0.55),
+          inset 0 1px 0 rgba(255,255,255,0.10);
+      }
+    }
+
+    @keyframes eco-ring {
+      0%   { transform: translate(-50%,-50%) scale(1); opacity: 0.55; }
+      100% { transform: translate(-50%,-50%) scale(2.4); opacity: 0; }
+    }
+
+    @keyframes eco-ring-2 {
+      0%   { transform: translate(-50%,-50%) scale(1); opacity: 0.35; }
+      100% { transform: translate(-50%,-50%) scale(1.85); opacity: 0; }
+    }
+
+    .eco-center {
+      position: absolute;
+      left: 183px;
+      top: 206px;
+      width: 134px;
+      height: 88px;
+      background: linear-gradient(155deg, rgba(38,43,57,0.97) 0%, rgba(22,26,36,0.99) 100%);
+      border: 1px solid rgba(234, 88, 12, 0.40);
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      z-index: 3;
+      animation: eco-center-pulse 3s ease-in-out infinite;
+      overflow: visible;
+      box-shadow:
+        0 0 32px rgba(234,88,12,0.18),
+        0 12px 40px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.10);
+    }
+
+    /* Top accent line */
+    .eco-center::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 18%; right: 18%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(234,88,12,0.75), transparent);
+      border-radius: 1px;
+    }
+
+    .eco-center-ring {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 134px; height: 134px;
+      border-radius: 50%;
+      border: 1px solid rgba(234, 88, 12, 0.18);
+      animation: eco-ring 3.2s ease-out infinite;
+      pointer-events: none;
+    }
+
+    .eco-center-ring-2 {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 134px; height: 134px;
+      border-radius: 50%;
+      border: 1px solid rgba(234, 88, 12, 0.10);
+      animation: eco-ring-2 3.2s ease-out infinite 1.6s;
+      pointer-events: none;
+    }
+
+    .eco-center-live {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 3px;
+    }
+
+    .eco-center-live-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 6px rgba(34,197,94,0.6);
+      animation: live-pulse 1.9s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    .eco-center-live-text {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #22c55e;
+    }
+
+    .eco-center-name {
+      font-size: 15px;
+      font-weight: var(--fw-bold);
+      color: var(--text-primary);
+      letter-spacing: -0.028em;
+      line-height: 1;
+    }
+
+    .eco-center-label {
+      font-size: 9.5px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    /* ── Surrounding nodes ───────────────────── */
+    @keyframes eco-float-a { 0%,100%{transform:translateY(0)}  50%{transform:translateY(-5px)} }
+    @keyframes eco-float-b { 0%,100%{transform:translateY(-3px)} 50%{transform:translateY(3px)} }
+    @keyframes eco-float-c { 0%,100%{transform:translateY(-2px)} 50%{transform:translateY(4px)} }
+
+    .eco-node {
+      position: absolute;
+      left: var(--nx);
+      top: var(--ny);
+      width: 88px;
+      height: 58px;
+      background: linear-gradient(155deg, rgba(28,32,44,0.94) 0%, rgba(19,22,31,0.97) 100%);
+      border: 1px solid rgba(42, 47, 58, 0.88);
+      border-radius: 13px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      z-index: 2;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow:
+        0 4px 20px rgba(0,0,0,0.40),
+        inset 0 1px 0 rgba(255,255,255,0.055);
+      transition:
+        border-color 0.28s var(--ease-out),
+        box-shadow   0.28s var(--ease-out),
+        transform    0.28s var(--ease-out);
+      cursor: default;
+      animation: eco-float-a 4.5s ease-in-out infinite;
+      animation-delay: var(--ndelay, 0s);
+    }
+
+    /* Top highlight per card */
+    .eco-node::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 22%; right: 22%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.075), transparent);
+    }
+
+    .eco-node:nth-child(even) { animation-name: eco-float-b; }
+    .eco-node:nth-child(3n)   { animation-name: eco-float-c; }
+
+    .eco-node:hover {
+      border-color: rgba(234, 88, 12, 0.42);
+      box-shadow:
+        0 6px 28px rgba(0,0,0,0.48),
+        0 0 22px rgba(234,88,12,0.14),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+      transform: translateY(-2px) scale(1.03);
+    }
+
+    .eco-node--accent {
+      border-color: rgba(234, 88, 12, 0.22);
+    }
+
+    /* Status dot */
+    .eco-node-status {
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      animation: live-pulse 2.6s ease-in-out infinite;
+      animation-delay: var(--ndelay, 0s);
+    }
+
+    .eco-node-status--green  { background: #22c55e; box-shadow: 0 0 5px rgba(34,197,94,0.55); }
+    .eco-node-status--orange { background: var(--color-primary); box-shadow: 0 0 5px rgba(234,88,12,0.55); }
+    .eco-node-status--blue   { background: #4285F4; box-shadow: 0 0 5px rgba(66,133,244,0.55); }
+    .eco-node-status--purple { background: #8B5CF6; box-shadow: 0 0 5px rgba(139,92,246,0.55); }
+    .eco-node-status--teal   { background: #14B8A6; box-shadow: 0 0 5px rgba(20,184,166,0.55); }
+
+    .eco-node-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      color: var(--color-primary);
-      margin-top: 2px;
     }
 
-    .benefit-text h4 {
-      font-size: var(--body-l);
+    .eco-icon--n8n,
+    .eco-icon--gptmaker { background: rgba(234,88,12,0.14); color: var(--color-primary); }
+    .eco-icon--whatsapp { background: rgba(34,197,94,0.14); color: #22c55e; }
+    .eco-icon--openai   { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.80); }
+    .eco-icon--gcal     { background: rgba(66,133,244,0.14); color: #4285F4; }
+    .eco-icon--crm      { background: rgba(139,92,246,0.14); color: #8B5CF6; }
+    .eco-icon--notion   { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.70); }
+    .eco-icon--webhooks { background: rgba(20,184,166,0.14); color: #14B8A6; }
+
+    .eco-node-name {
+      font-size: 10.5px;
       font-weight: var(--fw-semibold);
+      color: var(--text-secondary);
       letter-spacing: -0.008em;
-      color: var(--text-primary);
-      margin-bottom: var(--space-1);
+      line-height: 1;
+      white-space: nowrap;
     }
 
-    .benefit-text p {
+    /* ── Responsive ──────────────────────────── */
+    @media (max-width: 904px) {
+      .stack-layout {
+        grid-template-columns: 1fr;
+        gap: var(--space-12);
+      }
+
+      .stack-visual {
+        justify-content: center;
+      }
+
+      .eco-panel {
+        padding: 20px;
+      }
+
+      .eco-container {
+        width: 420px;
+        height: 420px;
+        transform: scale(0.84);
+        transform-origin: center;
+        margin: -32px auto;
+      }
+    }
+
+    @media (max-width: 599px) {
+      .eco-panel {
+        padding: 12px;
+      }
+
+      .eco-container {
+        transform: scale(0.58);
+        margin: -106px auto;
+      }
+    }
+
+    /* ══════════════════════════════════════════
+       PROBLEMA / RECONHECIMENTO
+    ══════════════════════════════════════════ */
+
+    /* Section-level broken-line texture */
+    #problem {
+      position: relative;
+    }
+
+    #problem::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        -55deg,
+        transparent 0px,
+        transparent 48px,
+        rgba(255,255,255,0.013) 48px,
+        rgba(255,255,255,0.013) 49px
+      );
+      pointer-events: none;
+    }
+
+    /* ── Header ──────────────────────────────── */
+    .problem-header {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto var(--space-6);
+    }
+
+    .problem-header .eyebrow {
+      justify-content: center;
+      margin-bottom: var(--space-4);
+    }
+
+    .problem-header .eyebrow::before {
+      display: none;
+    }
+
+    .problem-title {
+      font-size: clamp(28px, 3vw, 40px);
+      font-weight: var(--fw-bold);
+      line-height: 1.14;
+      letter-spacing: -0.022em;
+      color: var(--text-primary);
+      margin-bottom: var(--space-4);
+    }
+
+    .problem-desc {
+      font-size: var(--body-l);
+      color: var(--text-secondary);
+      line-height: var(--lh-body-l);
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    /* ── Cards grid ──────────────────────────── */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-6);
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* ── Problem card ────────────────────────── */
+    .problem-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-card);
+      padding: var(--space-8);
+      position: relative;
+      overflow: hidden;
+      transition:
+        border-color var(--transition-md),
+        box-shadow   var(--transition-md),
+        transform    var(--transition-md);
+    }
+
+    /* Corner accent — top-left glow tint */
+    .problem-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 180px; height: 120px;
+      background: radial-gradient(ellipse at top left, rgba(239,68,68,0.06), transparent 70%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity var(--transition-md);
+    }
+
+    .problem-card:hover {
+      border-color: rgba(239, 68, 68, 0.22);
+      box-shadow:
+        0 8px 36px rgba(0,0,0,0.30),
+        0 0 0 1px rgba(239,68,68,0.06) inset;
+      transform: translateY(-3px);
+    }
+
+    .problem-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Card number */
+    .problem-card-num {
+      font-size: 11px;
+      font-weight: var(--fw-semibold);
+      letter-spacing: 0.10em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      position: absolute;
+      top: var(--space-6);
+      right: var(--space-6);
+    }
+
+    /* Card icon */
+    .problem-card-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(239, 68, 68, 0.07);
+      border: 1px solid rgba(239, 68, 68, 0.13);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(239, 68, 68, 0.65);
+      margin-bottom: var(--space-6);
+      transition: background var(--transition-sm), border-color var(--transition-sm);
+    }
+
+    .problem-card:hover .problem-card-icon {
+      background: rgba(239, 68, 68, 0.11);
+      border-color: rgba(239, 68, 68, 0.22);
+    }
+
+    .problem-card-title {
+      font-size: var(--heading-4);
+      font-weight: var(--fw-semibold);
+      color: var(--text-primary);
+      letter-spacing: var(--ls-h4);
+      line-height: var(--lh-h4);
+      margin-bottom: var(--space-3);
+    }
+
+    .problem-card-desc {
       font-size: var(--body-m);
       color: var(--text-secondary);
       line-height: var(--lh-body-m);
     }
 
-    @media (max-width: 1024px) {
-      .benefits-layout {
+    /* ── Broken-flow indicator at card bottom ── */
+    .problem-flow {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: var(--space-6);
+      padding-top: var(--space-4);
+      border-top: 1px solid rgba(42, 47, 58, 0.7);
+    }
+
+    .pf-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: rgba(42, 47, 58, 1);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .pf-dot--lit {
+      background: rgba(239, 68, 68, 0.45);
+      border-color: rgba(239, 68, 68, 0.22);
+    }
+
+    .pf-seg {
+      flex: 1;
+      height: 1px;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(42,47,58,0.9) 0px,
+        rgba(42,47,58,0.9) 5px,
+        transparent 5px,
+        transparent 10px
+      );
+    }
+
+    .pf-seg--broken {
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(239,68,68,0.28) 0px,
+        rgba(239,68,68,0.28) 3px,
+        transparent 3px,
+        transparent 9px
+      );
+    }
+
+    .pf-x {
+      width: 16px; height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(239, 68, 68, 0.50);
+      flex-shrink: 0;
+    }
+
+    .problem-flow-label {
+      font-size: 10px;
+      font-weight: var(--fw-semibold);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(239, 68, 68, 0.45);
+      margin-left: var(--space-1);
+    }
+
+    /* ── Responsive ──────────────────────────── */
+    @media (max-width: 904px) {
+      .problem-grid {
         grid-template-columns: 1fr;
-        gap: var(--space-10);
+        gap: var(--space-5);
+      }
+    }
+
+    @media (max-width: 599px) {
+      .problem-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ══════════════════════════════════════════
+       SOLUÇÕES / SERVIÇOS
+    ══════════════════════════════════════════ */
+
+    .sol-header {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto var(--space-6);
+    }
+
+    .sol-header .eyebrow {
+      justify-content: center;
+      margin-bottom: var(--space-4);
+    }
+
+    .sol-header .eyebrow::before {
+      display: none;
+    }
+
+    .sol-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: var(--space-16);
+    }
+
+    .sol-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      transition:
+        border-color var(--transition-md),
+        box-shadow   var(--transition-md),
+        transform    var(--transition-md);
+    }
+
+    .sol-card:hover {
+      border-color: rgba(234, 88, 12, 0.30);
+      box-shadow: 0 8px 36px rgba(0,0,0,0.30), 0 0 24px rgba(234,88,12,0.07);
+      transform: translateY(-3px);
+    }
+
+    /* Illustration area */
+    .sol-illus {
+      height: 136px;
+      background: rgba(15, 17, 24, 0.85);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sol-illus::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.026) 1px, transparent 0);
+      background-size: 18px 18px;
+      pointer-events: none;
+    }
+
+    .sol-illus svg {
+      position: relative;
+      z-index: 1;
+      transition: transform 0.38s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .sol-card:hover .sol-illus svg {
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    .sol-body {
+      padding: var(--space-6);
+    }
+
+    .sol-card-title {
+      font-size: 17px;
+      font-weight: var(--fw-semibold);
+      color: var(--text-primary);
+      letter-spacing: -0.016em;
+      line-height: 1.28;
+      margin-bottom: var(--space-2);
+    }
+
+    .sol-card-desc {
+      font-size: var(--body-s);
+      color: var(--text-secondary);
+      line-height: 1.62;
+    }
+
+    /* ── CTA block ────────────────────────────── */
+    .sol-cta {
+      background: linear-gradient(155deg, rgba(29,33,43,0.92) 0%, rgba(21,24,33,0.96) 100%);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-hero);
+      padding: 56px var(--space-12);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      max-width: 840px;
+      margin: 0 auto;
+    }
+
+    .sol-cta::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 22%; right: 22%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(234,88,12,0.70), transparent);
+    }
+
+    .sol-cta::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 560px; height: 280px;
+      background: radial-gradient(ellipse at center top, rgba(234,88,12,0.065) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .sol-cta-label {
+      font-size: 11px;
+      font-weight: var(--fw-semibold);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-primary);
+      margin-bottom: var(--space-4);
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sol-cta-title {
+      font-size: clamp(20px, 2.2vw, 27px);
+      font-weight: var(--fw-semibold);
+      color: var(--text-primary);
+      letter-spacing: -0.022em;
+      line-height: 1.28;
+      margin-bottom: var(--space-3);
+      position: relative;
+      z-index: 1;
+    }
+
+    .sol-cta-sub {
+      font-size: var(--body-l);
+      color: var(--text-secondary);
+      line-height: var(--lh-body-l);
+      max-width: 500px;
+      margin: 0 auto var(--space-8);
+      position: relative;
+      z-index: 1;
+    }
+
+    .sol-cta-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 904px) {
+      .sol-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 599px) {
+      .sol-grid { grid-template-columns: 1fr; }
+
+      .sol-cta {
+        padding: 40px var(--space-6);
+        border-radius: var(--radius-container);
+      }
+
+      .sol-cta-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .sol-cta-actions .btn {
+        width: 100%;
+        justify-content: center;
       }
     }
   </style>
@@ -275,19 +2055,24 @@
   <nav class="navbar" id="navbar" role="navigation" aria-label="Menu principal">
 
     <a href="/" class="navbar-logo" aria-label="Oiko Automation">
-      oiko<span>.</span>
+      <span class="logo-oiko">Oiko</span>
+      <span class="logo-automation"> Automation</span>
+      <span class="logo-dot">.</span>
     </a>
 
     <ul class="navbar-links" id="navLinks" role="list">
-      <li><a href="#services">Serviços</a></li>
+      <li><a href="#home">Início</a></li>
+      <li><a href="#problem">Problema</a></li>
+      <li><a href="#services">Soluções</a></li>
+      <li><a href="#stack">Stack</a></li>
       <li><a href="#process">Processo</a></li>
-      <li><a href="#benefits">Benefícios</a></li>
       <li><a href="#faq">FAQ</a></li>
+      <li><a href="#contact">Contato</a></li>
     </ul>
 
     <div class="navbar-actions" id="navActions">
-      <a href="#contact" class="btn btn-primary btn-sm">
-        Fale conosco
+      <a href="#contact" class="btn btn-primary btn-sm navbar-cta">
+        Agendar Diagnóstico
       </a>
     </div>
 
@@ -311,70 +2096,452 @@
   ══════════════════════════════════════════ -->
   <section class="hero" id="home" aria-label="Hero">
 
-    <!-- Background visual -->
     <div class="hero-bg-dots" aria-hidden="true"></div>
     <div class="hero-bg-glow" aria-hidden="true"></div>
 
-    <!-- Nós decorativos (desktop) -->
-    <div class="hero-visual" aria-hidden="true">
-      <div class="hero-node"></div>
-      <div class="hero-node active"></div>
-      <div class="hero-node"></div>
-      <div class="hero-node active"></div>
-      <div class="hero-node"></div>
-      <div class="hero-node"></div>
-    </div>
-
     <div class="container">
-      <div class="hero-content">
+      <div class="hero-grid">
 
-        <!-- Badge -->
-        <div class="hero-meta">
-          <span class="badge">
-            <span class="badge-dot" aria-hidden="true"></span>
-            Automação com IA para negócios modernos
-          </span>
+        <!-- ── ESQUERDA: conteúdo ─────────────── -->
+        <div class="hero-content">
+
+          <div class="hero-hat reveal">
+            <span class="hero-hat-badge">
+              <span class="hero-hat-dot" aria-hidden="true"></span>
+              Automação com IA para negócios modernos
+            </span>
+          </div>
+
+          <h1 class="hero-title reveal reveal-delay-1">
+            Automatize processos,<br>
+            atendimento e vendas<br>
+            <span class="hero-title-accent">com IA</span>
+          </h1>
+
+          <p class="hero-desc reveal reveal-delay-2">
+            Criamos sistemas inteligentes para reduzir tarefas manuais,
+            acelerar operações e aumentar resultados com mais eficiência.
+          </p>
+
+          <div class="hero-actions reveal reveal-delay-3">
+            <a href="#contact" class="btn btn-primary btn-lg">
+              Agendar Diagnóstico
+              <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+            <a href="#services" class="btn btn-secondary btn-lg">
+              Ver Soluções
+            </a>
+          </div>
+
         </div>
 
-        <!-- Título principal — COPY PLACEHOLDER -->
-        <h1 class="display-xl reveal" style="max-width: 800px; margin-bottom: var(--space-6);">
-          Transforme sua operação<br>
-          com <span style="color: var(--color-primary);">Inteligência Artificial</span>
-        </h1>
+        <!-- ── DIREITA: painel visual ─────────── -->
+        <div class="hero-panel-wrap reveal reveal-delay-2" aria-hidden="true">
+          <div class="hero-panel">
 
-        <!-- Descrição — COPY PLACEHOLDER -->
-        <p class="body-xl text-secondary reveal reveal-delay-1" style="max-width: 600px; margin-bottom: var(--space-10);">
-          Automatizamos processos, atendimento e vendas com sistemas inteligentes feitos para reduzir custos, economizar tempo e aumentar resultados.
+            <div class="panel-header">
+              <div class="panel-status">
+                <span class="panel-status-dot"></span>
+                <span class="panel-status-label">Sistema ativo</span>
+              </div>
+              <span class="panel-live">
+                <span class="panel-live-dot"></span>ao vivo
+              </span>
+            </div>
+
+            <div class="panel-flow">
+              <div class="flow-node">
+                <div class="flow-icon">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                </div>
+                <span>Entrada</span>
+              </div>
+              <span class="flow-arrow">›</span>
+              <div class="flow-node flow-node--ai">
+                <div class="flow-icon">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <span>IA</span>
+              </div>
+              <span class="flow-arrow">›</span>
+              <div class="flow-node">
+                <div class="flow-icon">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                </div>
+                <span>Ação</span>
+              </div>
+              <span class="flow-arrow">›</span>
+              <div class="flow-node flow-node--done">
+                <div class="flow-icon">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <span>Entregue</span>
+              </div>
+            </div>
+
+            <div class="panel-metrics">
+              <div class="panel-metric">
+                <span class="metric-val">3.4h</span>
+                <span class="metric-lbl">salvas por dia</span>
+              </div>
+              <div class="panel-metric">
+                <span class="metric-val">98%</span>
+                <span class="metric-lbl">de precisão</span>
+              </div>
+              <div class="panel-metric">
+                <span class="metric-val">12s</span>
+                <span class="metric-lbl">tempo médio</span>
+              </div>
+            </div>
+
+            <div class="panel-sep"></div>
+
+            <div class="panel-feed">
+              <div class="feed-label">Atividade recente</div>
+              <div class="feed-item">
+                <span class="feed-dot"></span>
+                <span class="feed-text">Lead qualificado via WhatsApp</span>
+                <span class="feed-time">agora</span>
+              </div>
+              <div class="feed-item">
+                <span class="feed-dot"></span>
+                <span class="feed-text">Resposta automática enviada</span>
+                <span class="feed-time">12s</span>
+              </div>
+              <div class="feed-item">
+                <span class="feed-dot"></span>
+                <span class="feed-text">CRM atualizado com novo lead</span>
+                <span class="feed-time">38s</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── STATS: abaixo da linha ─────────── -->
+      <div class="hero-stats-section">
+        <div class="hero-stat">
+          <div class="stat-value"><span class="stat-num" data-count="3">0</span><span class="accent">x</span></div>
+          <div class="stat-label">mais produtividade</div>
+        </div>
+        <div class="hero-stat">
+          <div class="stat-value"><span class="stat-num" data-count="30">0</span><span class="accent">%</span></div>
+          <div class="stat-label">redução de custos operacionais</div>
+        </div>
+        <div class="hero-stat">
+          <div class="stat-value"><span class="stat-num" data-count="24">0</span><span class="accent">h</span></div>
+          <div class="stat-label">atendimento automatizado</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       PROBLEMA / RECONHECIMENTO
+  ══════════════════════════════════════════ -->
+  <section class="section section-alt" id="problem" aria-labelledby="problem-title">
+    <div class="container">
+
+      <!-- Header -->
+      <div class="problem-header">
+        <span class="eyebrow reveal">Por que automatizar agora</span>
+        <h2 class="problem-title reveal reveal-delay-1" id="problem-title">
+          Sua operação ainda perde tempo<br>com o que já deveria estar automatizado?
+        </h2>
+        <p class="problem-desc reveal reveal-delay-2">
+          Leads sem resposta, follow-ups esquecidos, agendamentos lentos e processos desconectados custam tempo, dinheiro e oportunidades todos os dias.
         </p>
+      </div>
 
-        <!-- CTAs -->
-        <div class="hero-actions reveal reveal-delay-2">
-          <a href="#contact" class="btn btn-primary btn-lg">
-            Agendar diagnóstico gratuito
-            <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
+      <!-- Cards -->
+      <div class="problem-grid">
+
+        <!-- 01 — Leads perdidos -->
+        <article class="problem-card reveal reveal-delay-1">
+          <span class="problem-card-num" aria-hidden="true">01</span>
+          <div class="problem-card-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+              <line x1="9" y1="10" x2="15" y2="10" stroke-width="1.8"/>
+              <line x1="12" y1="7" x2="12" y2="13" stroke-width="1.8"/>
             </svg>
-          </a>
-          <a href="#services" class="btn btn-secondary btn-lg">
-            Ver serviços
-          </a>
+          </div>
+          <h3 class="problem-card-title">Leads perdidos</h3>
+          <p class="problem-card-desc">Sem resposta rápida, oportunidades esfriam antes de qualquer conversa acontecer.</p>
+          <div class="problem-flow" aria-hidden="true">
+            <span class="pf-dot pf-dot--lit"></span>
+            <span class="pf-seg"></span>
+            <span class="pf-dot pf-dot--lit"></span>
+            <span class="pf-seg pf-seg--broken"></span>
+            <span class="pf-dot"></span>
+            <span class="pf-seg pf-seg--broken"></span>
+            <svg class="pf-x" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <span class="problem-flow-label">Sem resposta</span>
+          </div>
+        </article>
+
+        <!-- 02 — Processos lentos -->
+        <article class="problem-card reveal reveal-delay-2">
+          <span class="problem-card-num" aria-hidden="true">02</span>
+          <div class="problem-card-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <h3 class="problem-card-title">Processos lentos</h3>
+          <p class="problem-card-desc">Tarefas manuais e repetitivas atrasam entregas e drenam a capacidade do time.</p>
+          <div class="problem-flow" aria-hidden="true">
+            <span class="pf-dot pf-dot--lit"></span>
+            <span class="pf-seg pf-seg--broken"></span>
+            <span class="pf-dot pf-dot--lit"></span>
+            <span class="pf-seg pf-seg--broken"></span>
+            <span class="pf-dot pf-dot--lit"></span>
+            <span class="pf-seg pf-seg--broken"></span>
+            <svg class="pf-x" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <span class="problem-flow-label">Travado</span>
+          </div>
+        </article>
+
+        <!-- 03 — Equipe sobrecarregada -->
+        <article class="problem-card reveal reveal-delay-2">
+          <span class="problem-card-num" aria-hidden="true">03</span>
+          <div class="problem-card-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+          </div>
+          <h3 class="problem-card-title">Equipe sobrecarregada</h3>
+          <p class="problem-card-desc">Horas do time gastas com o que poderia ser resolvido automaticamente.</p>
+          <div class="problem-flow" aria-hidden="true">
+            <span class="pf-dot"></span>
+            <span class="pf-seg"></span>
+            <span class="pf-dot pf-dot--lit"></span>
+            <span class="pf-seg pf-seg--broken"></span>
+            <span class="pf-dot pf-dot--lit"></span>
+            <span class="pf-seg pf-seg--broken"></span>
+            <svg class="pf-x" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <span class="problem-flow-label">Sobrecarregado</span>
+          </div>
+        </article>
+
+        <!-- 04 — Sistemas desconectados -->
+        <article class="problem-card reveal reveal-delay-3">
+          <span class="problem-card-num" aria-hidden="true">04</span>
+          <div class="problem-card-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="2" y="2" width="8" height="8" rx="2"/>
+              <rect x="14" y="2" width="8" height="8" rx="2"/>
+              <rect x="14" y="14" width="8" height="8" rx="2"/>
+              <rect x="2" y="14" width="8" height="8" rx="2"/>
+              <line x1="10" y1="6" x2="14" y2="6" stroke-dasharray="2 2"/>
+              <line x1="6" y1="10" x2="6" y2="14" stroke-dasharray="2 2"/>
+              <line x1="18" y1="10" x2="18" y2="14" stroke-dasharray="2 2"/>
+              <line x1="10" y1="18" x2="14" y2="18" stroke-dasharray="2 2"/>
+            </svg>
+          </div>
+          <h3 class="problem-card-title">Sistemas desconectados</h3>
+          <p class="problem-card-desc">Informações espalhadas em ferramentas diferentes geram retrabalho e decisões lentas.</p>
+          <div class="problem-flow" aria-hidden="true">
+            <span class="pf-dot pf-dot--lit"></span>
+            <span class="pf-seg pf-seg--broken"></span>
+            <span class="pf-dot"></span>
+            <span class="pf-seg pf-seg--broken"></span>
+            <span class="pf-dot pf-dot--lit"></span>
+            <span class="pf-seg pf-seg--broken"></span>
+            <svg class="pf-x" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <span class="problem-flow-label">Desconectado</span>
+          </div>
+        </article>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       STACK / ECOSSISTEMA
+  ══════════════════════════════════════════ -->
+  <section class="section section-alt" id="stack" aria-labelledby="stack-title">
+    <div class="container">
+      <!-- Centered header -->
+      <div class="section-header centered reveal">
+        <span class="eyebrow">Integrações e ecossistema</span>
+        <h2 class="section-title reveal reveal-delay-1" id="stack-title">
+          Tecnologia para automatizar<br>o que trava sua operação
+        </h2>
+        <p class="section-desc reveal reveal-delay-2">
+          As nossas soluções conectam atendimento, vendas e operação em um fluxo mais rápido, organizado e inteligente.
+        </p>
+      </div>
+
+      <div class="stack-layout">
+
+        <!-- ── ESQUERDA: benefícios ───────────── -->
+        <div class="stack-content">
+
+          <ul class="stack-benefits reveal reveal-delay-1">
+            <li class="stack-benefit">
+              <span class="stack-benefit-icon">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+              </span>
+              Integração com seus sistemas atuais
+            </li>
+            <li class="stack-benefit">
+              <span class="stack-benefit-icon">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              </span>
+              Fluxos automatizados ponta a ponta
+            </li>
+            <li class="stack-benefit">
+              <span class="stack-benefit-icon">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </span>
+              IA treinada para o seu negócio
+            </li>
+          </ul>
+
         </div>
 
-        <!-- Stats -->
-        <div class="hero-stats-row reveal reveal-delay-3">
-          <div>
-            <div class="stat-value">3<span class="accent">x</span></div>
-            <div class="stat-label">mais produtividade</div>
-          </div>
-          <div>
-            <div class="stat-value">60<span class="accent">%</span></div>
-            <div class="stat-label">redução de custos</div>
-          </div>
-          <div>
-            <div class="stat-value">24<span class="accent">h</span></div>
-            <div class="stat-label">atendimento automatizado</div>
-          </div>
-        </div>
+        <!-- ── DIREITA: ecossistema visual ──────── -->
+        <div class="stack-visual reveal reveal-delay-2">
+          <div class="eco-panel">
+          <div class="eco-container">
+
+            <!-- Background radial glow -->
+            <div class="stack-visual-bg" aria-hidden="true"></div>
+
+            <!-- SVG: orbital ring + connection lines -->
+            <svg class="eco-lines" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <!-- Radial gradient: lines bright at center, fade at edges -->
+                <radialGradient id="ecoLineGrad" cx="250" cy="250" r="188" gradientUnits="userSpaceOnUse">
+                  <stop offset="0.15" stop-color="#2A2F3A" stop-opacity="0.95"/>
+                  <stop offset="0.75" stop-color="#2A2F3A" stop-opacity="0.45"/>
+                  <stop offset="1"    stop-color="#2A2F3A" stop-opacity="0.10"/>
+                </radialGradient>
+              </defs>
+
+              <!-- Orbital guide ring -->
+              <circle class="eco-orbit-ring" cx="250" cy="250" r="188"/>
+
+              <!-- Base static lines (center → node centers) -->
+              <line class="eco-line-base" x1="250" y1="250" x2="250" y2="70"/>
+              <line class="eco-line-base" x1="250" y1="250" x2="377" y2="123"/>
+              <line class="eco-line-base" x1="250" y1="250" x2="430" y2="250"/>
+              <line class="eco-line-base" x1="250" y1="250" x2="377" y2="377"/>
+              <line class="eco-line-base" x1="250" y1="250" x2="250" y2="430"/>
+              <line class="eco-line-base" x1="250" y1="250" x2="123" y2="377"/>
+              <line class="eco-line-base" x1="250" y1="250" x2="70"  y2="250"/>
+              <line class="eco-line-base" x1="250" y1="250" x2="123" y2="123"/>
+
+              <!-- Traveling data packets (staggered) -->
+              <line class="eco-line-travel" x1="250" y1="250" x2="250" y2="70"  style="animation-delay:0s"/>
+              <line class="eco-line-travel" x1="250" y1="250" x2="377" y2="123" style="animation-delay:0.38s"/>
+              <line class="eco-line-travel" x1="250" y1="250" x2="430" y2="250" style="animation-delay:0.75s"/>
+              <line class="eco-line-travel" x1="250" y1="250" x2="377" y2="377" style="animation-delay:1.13s"/>
+              <line class="eco-line-travel" x1="250" y1="250" x2="250" y2="430" style="animation-delay:1.50s"/>
+              <line class="eco-line-travel" x1="250" y1="250" x2="123" y2="377" style="animation-delay:1.88s"/>
+              <line class="eco-line-travel" x1="250" y1="250" x2="70"  y2="250" style="animation-delay:2.25s"/>
+              <line class="eco-line-travel" x1="250" y1="250" x2="123" y2="123" style="animation-delay:2.63s"/>
+            </svg>
+
+            <!-- Central node -->
+            <div class="eco-center" aria-label="Oiko AI — Sistema Central">
+              <div class="eco-center-ring"   aria-hidden="true"></div>
+              <div class="eco-center-ring-2" aria-hidden="true"></div>
+              <div class="eco-center-live" aria-hidden="true">
+                <span class="eco-center-live-dot"></span>
+                <span class="eco-center-live-text">Ativo</span>
+              </div>
+              <span class="eco-center-name">Oiko AI</span>
+              <span class="eco-center-label">Sistema Central</span>
+            </div>
+
+            <!-- Notion — top (12h) -->
+            <div class="eco-node" style="--nx:206px;--ny:42px;--ndelay:0s" aria-label="Notion">
+              <span class="eco-node-status eco-node-status--green" aria-hidden="true"></span>
+              <div class="eco-node-icon eco-icon--notion">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 4h16v2H4zm0 4h10v2H4zm0 4h8v2H4zm0 4h10v2H4zm0 4h16v2H4z"/></svg>
+              </div>
+              <span class="eco-node-name">Notion</span>
+            </div>
+
+            <!-- n8n — top-right (1:30h) -->
+            <div class="eco-node eco-node--accent" style="--nx:333px;--ny:95px;--ndelay:0.5s" aria-label="n8n">
+              <span class="eco-node-status eco-node-status--orange" aria-hidden="true"></span>
+              <div class="eco-node-icon eco-icon--n8n">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="19" cy="19" r="2"/><line x1="7" y1="11" x2="17" y2="6"/><line x1="7" y1="13" x2="17" y2="18"/></svg>
+              </div>
+              <span class="eco-node-name">n8n</span>
+            </div>
+
+            <!-- WhatsApp — right (3h) -->
+            <div class="eco-node eco-node--accent" style="--nx:386px;--ny:221px;--ndelay:1s" aria-label="WhatsApp">
+              <span class="eco-node-status eco-node-status--green" aria-hidden="true"></span>
+              <div class="eco-node-icon eco-icon--whatsapp">
+                <svg width="12" height="12" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.824.738 5.478 2.031 7.782L0 32l8.418-2.006A15.93 15.93 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm8.326 22.654c-.346.972-2.01 1.86-2.762 1.98-.72.114-1.627.162-2.623-.165a23.8 23.8 0 01-2.376-.88c-4.18-1.806-6.909-6.037-7.117-6.317-.208-.28-1.693-2.253-1.693-4.297 0-2.044 1.072-3.048 1.452-3.463.38-.415.831-.519 1.108-.519l.796.015c.255.012.597-.097.935.713.346.83 1.177 2.874 1.28 3.082.104.208.174.45.035.727-.139.277-.208.45-.415.693l-.623.727c-.208.208-.424.433-.183.85.242.415 1.074 1.774 2.306 2.874 1.585 1.413 2.92 1.85 3.33 2.059.41.208.65.174.89-.104.242-.277 1.038-1.21 1.315-1.624.276-.415.553-.346.934-.208.38.138 2.42 1.143 2.836 1.35.415.208.692.312.796.484.104.174.104 1.005-.242 1.977z"/></svg>
+              </div>
+              <span class="eco-node-name">WhatsApp</span>
+            </div>
+
+            <!-- OpenAI — bottom-right (4:30h) -->
+            <div class="eco-node" style="--nx:333px;--ny:349px;--ndelay:1.5s" aria-label="OpenAI">
+              <span class="eco-node-status eco-node-status--green" aria-hidden="true"></span>
+              <div class="eco-node-icon eco-icon--openai">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              </div>
+              <span class="eco-node-name">OpenAI</span>
+            </div>
+
+            <!-- Webhooks — bottom (6h) -->
+            <div class="eco-node" style="--nx:206px;--ny:402px;--ndelay:2s" aria-label="Webhooks e APIs">
+              <span class="eco-node-status eco-node-status--teal" aria-hidden="true"></span>
+              <div class="eco-node-icon eco-icon--webhooks">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              </div>
+              <span class="eco-node-name">APIs</span>
+            </div>
+
+            <!-- Google Calendar — bottom-left (7:30h) -->
+            <div class="eco-node" style="--nx:79px;--ny:349px;--ndelay:2.5s" aria-label="Google Calendar">
+              <span class="eco-node-status eco-node-status--blue" aria-hidden="true"></span>
+              <div class="eco-node-icon eco-icon--gcal">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <span class="eco-node-name">G Calendar</span>
+            </div>
+
+            <!-- CRM — left (9h) -->
+            <div class="eco-node" style="--nx:26px;--ny:221px;--ndelay:3s" aria-label="CRM">
+              <span class="eco-node-status eco-node-status--purple" aria-hidden="true"></span>
+              <div class="eco-node-icon eco-icon--crm">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+              </div>
+              <span class="eco-node-name">CRM</span>
+            </div>
+
+            <!-- GPT Maker — top-left (10:30h) -->
+            <div class="eco-node eco-node--accent" style="--nx:79px;--ny:95px;--ndelay:3.5s" aria-label="GPT Maker">
+              <span class="eco-node-status eco-node-status--orange" aria-hidden="true"></span>
+              <div class="eco-node-icon eco-icon--gptmaker">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              </div>
+              <span class="eco-node-name">GPT Maker</span>
+            </div>
+
+          </div><!-- /eco-container -->
+          </div><!-- /eco-panel -->
+        </div><!-- /stack-visual -->
 
       </div>
     </div>
@@ -382,152 +2549,450 @@
 
 
   <!-- ══════════════════════════════════════════
-       SERVIÇOS
+       SOLUÇÕES / SERVIÇOS
   ══════════════════════════════════════════ -->
   <section class="section section-alt" id="services" aria-labelledby="services-title">
     <div class="container">
 
-      <div class="section-header" style="margin-bottom: var(--space-12);">
-        <span class="eyebrow reveal">Nossos serviços</span>
-        <h2 class="section-title heading-2 reveal reveal-delay-1" id="services-title">
-          Automação para cada etapa<br>do seu negócio
+      <!-- Header -->
+      <div class="sol-header">
+        <span class="eyebrow reveal">Nossas soluções</span>
+        <h2 class="section-title reveal reveal-delay-1" id="services-title">
+          Soluções inteligentes para<br>automatizar seu negócio
         </h2>
-        <p class="section-desc body-l reveal reveal-delay-2">
-          Soluções desenvolvidas para empresas que querem crescer com eficiência — sem aumentar o time.
+        <p class="section-desc reveal reveal-delay-2">
+          Da captação ao atendimento, criamos sistemas com IA que reduzem esforço operacional e melhoram a performance do seu time.
         </p>
       </div>
 
-      <div class="services-grid reveal reveal-delay-1">
+      <!-- Cards grid -->
+      <div class="sol-grid">
 
-        <!-- 01 -->
-        <article class="service-card">
-          <span class="service-num" aria-hidden="true">01</span>
-          <div class="card-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        <!-- 01 — Atendimento com IA -->
+        <article class="sol-card reveal">
+          <div class="sol-illus" aria-hidden="true">
+            <svg viewBox="0 0 200 110" width="200" height="110" xmlns="http://www.w3.org/2000/svg">
+              <!-- Incoming message bars -->
+              <rect x="22" y="14" width="96" height="12" rx="6" fill="rgba(255,255,255,0.07)"/>
+              <rect x="22" y="32" width="72" height="12" rx="6" fill="rgba(255,255,255,0.05)"/>
+              <!-- AI response bubble -->
+              <rect x="36" y="56" width="116" height="36" rx="11" fill="rgba(234,88,12,0.09)" stroke="rgba(234,88,12,0.38)" stroke-width="1.2"/>
+              <!-- Bubble tail -->
+              <path d="M52 92 L38 104 L58 92" fill="rgba(234,88,12,0.09)" stroke="rgba(234,88,12,0.38)" stroke-width="1.2" stroke-linejoin="round"/>
+              <!-- Typing dots -->
+              <circle cx="82"  cy="74" r="3" fill="rgba(234,88,12,0.80)"/>
+              <circle cx="94"  cy="74" r="3" fill="rgba(234,88,12,0.80)"/>
+              <circle cx="106" cy="74" r="3" fill="rgba(234,88,12,0.80)"/>
+              <!-- Channel nodes right -->
+              <circle cx="170" cy="24"  r="12" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.11)" stroke-width="1"/>
+              <circle cx="170" cy="55"  r="12" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.11)" stroke-width="1"/>
+              <circle cx="170" cy="88"  r="12" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.11)" stroke-width="1"/>
+              <!-- Connector dashes -->
+              <line x1="157" y1="28"  x2="140" y2="36"  stroke="rgba(255,255,255,0.09)" stroke-width="1" stroke-dasharray="3 3"/>
+              <line x1="157" y1="60"  x2="154" y2="65"  stroke="rgba(255,255,255,0.09)" stroke-width="1" stroke-dasharray="3 3"/>
+              <line x1="157" y1="84"  x2="154" y2="78"  stroke="rgba(255,255,255,0.09)" stroke-width="1" stroke-dasharray="3 3"/>
+              <!-- W mark in node 1 -->
+              <path d="M163 20 l3 8 l4-5 l4 5 l3-8" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.1" stroke-linejoin="round"/>
+              <!-- @ mark in node 2 -->
+              <circle cx="170" cy="55" r="4" fill="none" stroke="rgba(255,255,255,0.20)" stroke-width="1"/>
+              <circle cx="170" cy="55" r="1.5" fill="rgba(255,255,255,0.20)"/>
+              <!-- </> in node 3 -->
+              <path d="M165 85 l-3 3 l3 3" fill="none" stroke="rgba(255,255,255,0.20)" stroke-width="1.2" stroke-linejoin="round"/>
+              <path d="M175 85 l3 3 l-3 3" fill="none" stroke="rgba(255,255,255,0.20)" stroke-width="1.2" stroke-linejoin="round"/>
             </svg>
           </div>
-          <h3 class="card-title">Atendimento por IA</h3>
-          <p class="card-desc">Agentes inteligentes que respondem seus clientes via WhatsApp e site — 24h por dia, sem pausas nem erros.</p>
+          <div class="sol-body">
+            <h3 class="sol-card-title">Atendimento ao Cliente com IA</h3>
+            <p class="sol-card-desc">Agentes para WhatsApp, site e canais de mensagem que respondem clientes automaticamente.</p>
+          </div>
         </article>
 
-        <!-- 02 -->
-        <article class="service-card">
-          <span class="service-num" aria-hidden="true">02</span>
-          <div class="card-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+        <!-- 02 — Qualificação de Leads -->
+        <article class="sol-card reveal reveal-delay-1">
+          <div class="sol-illus" aria-hidden="true">
+            <svg viewBox="0 0 200 110" width="200" height="110" xmlns="http://www.w3.org/2000/svg">
+              <!-- Incoming lead dots -->
+              <circle cx="55"  cy="14" r="5" fill="rgba(255,255,255,0.11)"/>
+              <circle cx="75"  cy="10" r="5" fill="rgba(255,255,255,0.11)"/>
+              <circle cx="100" cy="12" r="5" fill="rgba(255,255,255,0.11)"/>
+              <circle cx="125" cy="10" r="5" fill="rgba(255,255,255,0.11)"/>
+              <circle cx="145" cy="14" r="5" fill="rgba(255,255,255,0.11)"/>
+              <!-- Funnel shape -->
+              <path d="M50 24 L80 72" stroke="rgba(255,255,255,0.13)" stroke-width="1.5" fill="none"/>
+              <path d="M150 24 L120 72" stroke="rgba(255,255,255,0.13)" stroke-width="1.5" fill="none"/>
+              <line x1="80" y1="72" x2="120" y2="72" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+              <!-- Qualified dots bottom -->
+              <circle cx="82"  cy="90" r="9" fill="rgba(234,88,12,0.12)" stroke="rgba(234,88,12,0.55)" stroke-width="1.5"/>
+              <circle cx="118" cy="90" r="9" fill="rgba(234,88,12,0.12)" stroke="rgba(234,88,12,0.55)" stroke-width="1.5"/>
+              <!-- Checkmarks -->
+              <polyline points="77,90 81,94 87,86" fill="none" stroke="rgba(234,88,12,0.90)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+              <polyline points="113,90 117,94 123,86" fill="none" stroke="rgba(234,88,12,0.90)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+              <!-- Rejected dots (faded) -->
+              <circle cx="18"  cy="90" r="5" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+              <circle cx="182" cy="90" r="5" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+              <line x1="15" y1="87" x2="21" y2="93" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+              <line x1="21" y1="87" x2="15" y2="93" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+              <line x1="179" y1="87" x2="185" y2="93" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+              <line x1="185" y1="87" x2="179" y2="93" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
             </svg>
           </div>
-          <h3 class="card-title">Pré-venda Automatizada</h3>
-          <p class="card-desc">SDRs com IA que qualificam leads antes do seu time comercial agir — mais conversão, menos tempo desperdiçado.</p>
+          <div class="sol-body">
+            <h3 class="sol-card-title">Qualificação de Leads com IA</h3>
+            <p class="sol-card-desc">SDRs com IA que qualificam leads antes de chegarem ao time comercial.</p>
+          </div>
         </article>
 
-        <!-- 03 -->
-        <article class="service-card">
-          <span class="service-num" aria-hidden="true">03</span>
-          <div class="card-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        <!-- 03 — Agendamento -->
+        <article class="sol-card reveal reveal-delay-2">
+          <div class="sol-illus" aria-hidden="true">
+            <svg viewBox="0 0 200 110" width="200" height="110" xmlns="http://www.w3.org/2000/svg">
+              <!-- Calendar container -->
+              <rect x="38" y="10" width="124" height="90" rx="9" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+              <!-- Header bar -->
+              <rect x="38" y="10" width="124" height="24" rx="9" fill="rgba(255,255,255,0.04)"/>
+              <rect x="38" y="28" width="124" height="6" rx="0" fill="rgba(255,255,255,0.04)"/>
+              <!-- Header dots: nav circles -->
+              <circle cx="55" cy="22" r="4" fill="rgba(255,255,255,0.08)"/>
+              <circle cx="145" cy="22" r="4" fill="rgba(255,255,255,0.08)"/>
+              <!-- Month label simulation -->
+              <rect x="80" y="18" width="40" height="8" rx="4" fill="rgba(255,255,255,0.06)"/>
+              <!-- Grid: 7 columns x 3 rows of cells -->
+              <!-- Row 1 -->
+              <rect x="46"  cy="40" x="46"  y="40" width="14" height="12" rx="3" fill="rgba(255,255,255,0.04)"/>
+              <rect x="65"  y="40" width="14" height="12" rx="3" fill="rgba(255,255,255,0.04)"/>
+              <rect x="84"  y="40" width="14" height="12" rx="3" fill="rgba(234,88,12,0.22)" stroke="rgba(234,88,12,0.55)" stroke-width="1"/>
+              <rect x="103" y="40" width="14" height="12" rx="3" fill="rgba(255,255,255,0.04)"/>
+              <rect x="122" y="40" width="14" height="12" rx="3" fill="rgba(255,255,255,0.04)"/>
+              <rect x="141" y="40" width="14" height="12" rx="3" fill="rgba(255,255,255,0.04)"/>
+              <!-- Row 2 -->
+              <rect x="46"  y="58" width="14" height="12" rx="3" fill="rgba(255,255,255,0.04)"/>
+              <rect x="65"  y="58" width="14" height="12" rx="3" fill="rgba(255,255,255,0.06)"/>
+              <rect x="84"  y="58" width="14" height="12" rx="3" fill="rgba(255,255,255,0.04)"/>
+              <rect x="103" y="58" width="14" height="12" rx="3" fill="rgba(255,255,255,0.04)"/>
+              <rect x="122" y="58" width="14" height="12" rx="3" fill="rgba(255,255,255,0.06)"/>
+              <rect x="141" y="58" width="14" height="12" rx="3" fill="rgba(255,255,255,0.04)"/>
+              <!-- Row 3 -->
+              <rect x="46"  y="76" width="14" height="12" rx="3" fill="rgba(255,255,255,0.04)"/>
+              <rect x="65"  y="76" width="14" height="12" rx="3" fill="rgba(255,255,255,0.04)"/>
+              <rect x="84"  y="76" width="14" height="12" rx="3" fill="rgba(255,255,255,0.04)"/>
+              <rect x="103" y="76" width="14" height="12" rx="3" fill="rgba(255,255,255,0.06)"/>
+              <rect x="122" y="76" width="14" height="12" rx="3" fill="rgba(255,255,255,0.04)"/>
+              <rect x="141" y="76" width="14" height="12" rx="3" fill="rgba(255,255,255,0.04)"/>
+              <!-- Accent dot on highlighted cell -->
+              <circle cx="91" cy="46" r="3" fill="rgba(234,88,12,0.90)"/>
             </svg>
           </div>
-          <h3 class="card-title">Agendamento Inteligente</h3>
-          <p class="card-desc">IA que agenda consultas e serviços automaticamente para clínicas, prestadores e empresas de serviço.</p>
+          <div class="sol-body">
+            <h3 class="sol-card-title">Agendamento com IA</h3>
+            <p class="sol-card-desc">Automatize o agendamento de consultas, reuniões e atendimentos com mais agilidade.</p>
+          </div>
         </article>
 
-        <!-- 04 -->
-        <article class="service-card">
-          <span class="service-num" aria-hidden="true">04</span>
-          <div class="card-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        <!-- 04 — Follow-up -->
+        <article class="sol-card reveal">
+          <div class="sol-illus" aria-hidden="true">
+            <svg viewBox="0 0 200 110" width="200" height="110" xmlns="http://www.w3.org/2000/svg">
+              <!-- Timeline line -->
+              <line x1="22" y1="62" x2="178" y2="62" stroke="rgba(255,255,255,0.10)" stroke-width="1.5"/>
+              <!-- Nodes on timeline -->
+              <circle cx="45"  cy="62" r="7" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+              <circle cx="85"  cy="62" r="7" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+              <circle cx="125" cy="62" r="9" fill="rgba(234,88,12,0.14)" stroke="rgba(234,88,12,0.60)" stroke-width="1.5"/>
+              <circle cx="165" cy="62" r="7" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+              <!-- Active center dot -->
+              <circle cx="125" cy="62" r="3.5" fill="rgba(234,88,12,0.90)"/>
+              <!-- Loop arrows above -->
+              <path d="M50 48 Q65 32 80 48" fill="none" stroke="rgba(234,88,12,0.38)" stroke-width="1.3" stroke-dasharray="3 3"/>
+              <polygon points="78,42 82,49 76,49" fill="rgba(234,88,12,0.50)"/>
+              <path d="M90 48 Q107 32 120 48" fill="none" stroke="rgba(234,88,12,0.38)" stroke-width="1.3" stroke-dasharray="3 3"/>
+              <polygon points="118,42 122,49 116,49" fill="rgba(234,88,12,0.50)"/>
+              <!-- Labels below nodes -->
+              <rect x="34"  y="76" width="22" height="6" rx="3" fill="rgba(255,255,255,0.05)"/>
+              <rect x="74"  y="76" width="22" height="6" rx="3" fill="rgba(255,255,255,0.05)"/>
+              <rect x="112" y="76" width="26" height="6" rx="3" fill="rgba(234,88,12,0.18)"/>
+              <rect x="154" y="76" width="22" height="6" rx="3" fill="rgba(255,255,255,0.03)"/>
+              <!-- Dots inside first two nodes -->
+              <circle cx="45" cy="62" r="2" fill="rgba(255,255,255,0.30)"/>
+              <circle cx="85" cy="62" r="2" fill="rgba(255,255,255,0.30)"/>
             </svg>
           </div>
-          <h3 class="card-title">Follow-up de Leads</h3>
-          <p class="card-desc">Acompanhamento automático de prospects para evitar perda de receita e manter o pipeline sempre ativo.</p>
+          <div class="sol-body">
+            <h3 class="sol-card-title">Follow-up Automático de Leads</h3>
+            <p class="sol-card-desc">Recupere oportunidades com fluxos automáticos de acompanhamento.</p>
+          </div>
         </article>
 
-        <!-- 05 -->
-        <article class="service-card">
-          <span class="service-num" aria-hidden="true">05</span>
-          <div class="card-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+        <!-- 05 — Automação de Processos -->
+        <article class="sol-card reveal reveal-delay-1">
+          <div class="sol-illus" aria-hidden="true">
+            <svg viewBox="0 0 200 110" width="200" height="110" xmlns="http://www.w3.org/2000/svg">
+              <!-- Three process boxes -->
+              <rect x="10"  y="36" width="48" height="38" rx="7" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.13)" stroke-width="1.2"/>
+              <rect x="76"  y="36" width="48" height="38" rx="7" fill="rgba(234,88,12,0.07)" stroke="rgba(234,88,12,0.38)" stroke-width="1.2"/>
+              <rect x="142" y="36" width="48" height="38" rx="7" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.13)" stroke-width="1.2"/>
+              <!-- Arrows between boxes -->
+              <line x1="59" y1="55" x2="73" y2="55" stroke="rgba(234,88,12,0.55)" stroke-width="1.5"/>
+              <polygon points="70,51 76,55 70,59" fill="rgba(234,88,12,0.70)"/>
+              <line x1="125" y1="55" x2="139" y2="55" stroke="rgba(234,88,12,0.55)" stroke-width="1.5"/>
+              <polygon points="136,51 142,55 136,59" fill="rgba(234,88,12,0.70)"/>
+              <!-- Data rows in left box -->
+              <rect x="18" y="46" width="32" height="4" rx="2" fill="rgba(255,255,255,0.12)"/>
+              <rect x="18" y="54" width="22" height="4" rx="2" fill="rgba(255,255,255,0.08)"/>
+              <rect x="18" y="62" width="28" height="4" rx="2" fill="rgba(255,255,255,0.06)"/>
+              <!-- Center box: single process indicator -->
+              <circle cx="100" cy="55" r="10" fill="none" stroke="rgba(234,88,12,0.30)" stroke-width="1"/>
+              <circle cx="100" cy="55" r="4"  fill="rgba(234,88,12,0.80)"/>
+              <!-- Data rows in right box -->
+              <rect x="150" y="46" width="32" height="4" rx="2" fill="rgba(255,255,255,0.12)"/>
+              <rect x="150" y="54" width="24" height="4" rx="2" fill="rgba(255,255,255,0.08)"/>
+              <rect x="150" y="62" width="30" height="4" rx="2" fill="rgba(255,255,255,0.06)"/>
+              <!-- Below-box status lines -->
+              <line x1="10"  y1="84" x2="58"  y2="84" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+              <line x1="142" y1="84" x2="190" y2="84" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+              <line x1="76"  y1="84" x2="124" y2="84" stroke="rgba(234,88,12,0.22)" stroke-width="1"/>
             </svg>
           </div>
-          <h3 class="card-title">Automação de Processos</h3>
-          <p class="card-desc">Integração entre sistemas internos para eliminar trabalho repetitivo, reduzir erros e liberar seu time.</p>
+          <div class="sol-body">
+            <h3 class="sol-card-title">Automação de Processos</h3>
+            <p class="sol-card-desc">Conecte ferramentas e elimine tarefas repetitivas na operação.</p>
+          </div>
         </article>
 
-        <!-- 06 -->
-        <article class="service-card">
-          <span class="service-num" aria-hidden="true">06</span>
-          <div class="card-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+        <!-- 06 — Agentes de IA -->
+        <article class="sol-card reveal reveal-delay-2">
+          <div class="sol-illus" aria-hidden="true">
+            <svg viewBox="0 0 200 110" width="200" height="110" xmlns="http://www.w3.org/2000/svg">
+              <!-- Center hub -->
+              <circle cx="100" cy="55" r="20" fill="rgba(234,88,12,0.08)" stroke="rgba(234,88,12,0.45)" stroke-width="1.5"/>
+              <circle cx="100" cy="55" r="8"  fill="rgba(234,88,12,0.22)" stroke="rgba(234,88,12,0.65)" stroke-width="1"/>
+              <!-- Orbit ring -->
+              <circle cx="100" cy="55" r="40" fill="none" stroke="rgba(42,47,58,0.60)" stroke-width="1" stroke-dasharray="3 8"/>
+              <!-- 6 spoke nodes at 60° intervals -->
+              <!-- Top (270°) -->
+              <circle cx="100" cy="12"  r="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+              <line x1="100" y1="35"  x2="100" y2="20"  stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="3 3"/>
+              <!-- Top-right (330°) -->
+              <circle cx="135" cy="31"  r="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+              <line x1="118" y1="45"  x2="130" y2="36"  stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="3 3"/>
+              <!-- Bottom-right (30°) -->
+              <circle cx="135" cy="79"  r="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+              <line x1="118" y1="65"  x2="130" y2="74"  stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="3 3"/>
+              <!-- Bottom (90°) -->
+              <circle cx="100" cy="98"  r="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+              <line x1="100" y1="75"  x2="100" y2="90"  stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="3 3"/>
+              <!-- Bottom-left (150°) -->
+              <circle cx="65"  cy="79"  r="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+              <line x1="82"  y1="65"  x2="70"  y2="74"  stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="3 3"/>
+              <!-- Top-left (210°) -->
+              <circle cx="65"  cy="31"  r="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+              <line x1="82"  y1="45"  x2="70"  y2="36"  stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="3 3"/>
+              <!-- Tiny dots inside spoke nodes -->
+              <circle cx="100" cy="12"  r="2.5" fill="rgba(255,255,255,0.22)"/>
+              <circle cx="135" cy="31"  r="2.5" fill="rgba(255,255,255,0.22)"/>
+              <circle cx="135" cy="79"  r="2.5" fill="rgba(255,255,255,0.22)"/>
+              <circle cx="100" cy="98"  r="2.5" fill="rgba(255,255,255,0.22)"/>
+              <circle cx="65"  cy="79"  r="2.5" fill="rgba(255,255,255,0.22)"/>
+              <circle cx="65"  cy="31"  r="2.5" fill="rgba(255,255,255,0.22)"/>
             </svg>
           </div>
-          <h3 class="card-title">Agentes IA Avançados</h3>
-          <p class="card-desc">Sistemas integrados para automações complexas que combinam múltiplas ferramentas e fontes de dados.</p>
+          <div class="sol-body">
+            <h3 class="sol-card-title">Agentes de IA com Integrações</h3>
+            <p class="sol-card-desc">Soluções avançadas para empresas que precisam de automação conectada a sistemas.</p>
+          </div>
         </article>
 
+      </div><!-- /sol-grid -->
+
+      <!-- CTA Block -->
+      <div class="sol-cta reveal">
+        <span class="sol-cta-label">Próximo passo</span>
+        <h3 class="sol-cta-title">Nem toda automação faz sentido<br>para todo negócio.</h3>
+        <p class="sol-cta-sub">Ajudamos você a entender o que vale automatizar primeiro — sem enrolação e sem proposta genérica.</p>
+        <div class="sol-cta-actions">
+          <a href="#contact" class="btn btn-primary btn-lg">
+            Descobrir qual solução faz sentido
+            <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#contact" class="btn btn-secondary btn-lg">
+            Agendar Diagnóstico
+          </a>
+        </div>
       </div>
+
     </div>
   </section>
 
 
   <!-- ══════════════════════════════════════════
-       PROCESSO
+       PROCESSO / ROADMAP
   ══════════════════════════════════════════ -->
   <section class="section" id="process" aria-labelledby="process-title">
     <div class="container">
 
-      <div class="section-header reveal" style="margin-bottom: var(--space-16);">
-        <span class="eyebrow">Como funciona</span>
-        <h2 class="section-title heading-2" id="process-title">
-          Três etapas para transformar<br>seu negócio
+      <!-- Header -->
+      <div class="section-header centered reveal">
+        <span class="eyebrow">Como trabalhamos</span>
+        <h2 class="section-title reveal reveal-delay-1" id="process-title">
+          O roadmap da sua implementação
         </h2>
+        <p class="section-desc reveal reveal-delay-2">
+          Um processo estruturado para desenhar, validar e implementar uma solução pensada para a realidade da sua operação.
+        </p>
       </div>
 
-      <div class="process-grid">
+      <!-- Roadmap -->
+      <div class="roadmap reveal reveal-delay-1">
 
-        <div class="reveal">
-          <div class="step-number">01</div>
-          <h3 class="step-title">Diagnóstico &amp; Análise</h3>
-          <p class="step-desc">Mapeamos seus processos, identificamos gargalos e encontramos as oportunidades de automação com maior impacto no seu negócio.</p>
-        </div>
-
-        <div class="reveal reveal-delay-2">
-          <div class="step-number">02</div>
-          <h3 class="step-title">Desenvolvimento &amp; Testes</h3>
-          <p class="step-desc">Desenvolvemos as automações com IA, integramos com suas ferramentas e testamos cada fluxo com rigor antes de ir ao ar.</p>
+        <!-- Time axis -->
+        <div class="roadmap-axis" aria-hidden="true">
+          <span class="roadmap-axis-label">Semana 1</span>
+          <span class="roadmap-axis-label">Semana 2</span>
+          <span class="roadmap-axis-label">Semana 3+</span>
         </div>
 
-        <div class="reveal reveal-delay-4">
-          <div class="step-number">03</div>
-          <h3 class="step-title">Implementação &amp; Otimização</h3>
-          <p class="step-desc">Colocamos tudo em produção, treinamos seu time e monitoramos continuamente para garantir os melhores resultados.</p>
+        <!-- Track: horizontal spine + milestone nodes -->
+        <div class="roadmap-track-row" aria-hidden="true">
+          <div class="roadmap-track-line">
+            <div class="roadmap-track-dash"></div>
+            <div class="roadmap-traveler"></div>
+          </div>
+          <div class="roadmap-track-nodes">
+            <div class="roadmap-node-slot">
+              <div class="roadmap-node-dot roadmap-node-dot--done">
+                <div class="roadmap-node-inner"></div>
+              </div>
+            </div>
+            <div class="roadmap-node-slot">
+              <div class="roadmap-node-dot roadmap-node-dot--active">
+                <div class="roadmap-node-inner"></div>
+              </div>
+            </div>
+            <div class="roadmap-node-slot">
+              <div class="roadmap-node-dot roadmap-node-dot--next">
+                <div class="roadmap-node-inner"></div>
+              </div>
+            </div>
+          </div>
         </div>
 
-      </div>
+        <!-- Vertical connectors -->
+        <div class="roadmap-connectors" aria-hidden="true">
+          <div class="roadmap-connector"></div>
+          <div class="roadmap-connector"></div>
+          <div class="roadmap-connector"></div>
+        </div>
 
-      <!-- Stats row -->
-      <div class="stats-grid reveal">
-        <div class="stat-cell">
-          <div class="stat-value">−65<span class="accent">%</span></div>
-          <div class="stat-label">custos operacionais</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-value">3<span class="accent">x</span></div>
-          <div class="stat-label">mais produtividade</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-value">−90<span class="accent">%</span></div>
-          <div class="stat-label">tempo de resposta</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-value">+40<span class="accent">%</span></div>
-          <div class="stat-label">conversão de leads</div>
+        <!-- Phase panels -->
+        <div class="roadmap-phases">
+
+          <!-- Phase 01 -->
+          <article class="roadmap-phase roadmap-phase--done">
+            <div class="roadmap-phase-header">
+              <span class="roadmap-phase-num">01</span>
+              <span class="roadmap-phase-badge roadmap-phase-badge--done">Concluído</span>
+            </div>
+            <div class="roadmap-phase-body">
+              <h3 class="roadmap-phase-title">Diagnóstico e Estratégia</h3>
+              <p class="roadmap-phase-desc">Entendemos sua operação, mapeamos gargalos e definimos onde a automação gera mais impacto.</p>
+              <ul class="roadmap-tasks" aria-label="Entregas desta fase">
+                <li class="roadmap-task roadmap-task--done">
+                  <span class="roadmap-task-icon roadmap-task-icon--done" aria-hidden="true">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>
+                  </span>
+                  <span class="roadmap-task-label">Análise da operação</span>
+                </li>
+                <li class="roadmap-task roadmap-task--done">
+                  <span class="roadmap-task-icon roadmap-task-icon--done" aria-hidden="true">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>
+                  </span>
+                  <span class="roadmap-task-label">Identificação de oportunidades</span>
+                </li>
+                <li class="roadmap-task roadmap-task--done">
+                  <span class="roadmap-task-icon roadmap-task-icon--done" aria-hidden="true">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>
+                  </span>
+                  <span class="roadmap-task-label">Definição do escopo ideal</span>
+                </li>
+              </ul>
+            </div>
+            <div class="roadmap-phase-footer">
+              <span class="roadmap-output-dot" aria-hidden="true"></span>
+              <span class="roadmap-output-label">Entrega: relatório de diagnóstico</span>
+            </div>
+          </article>
+
+          <!-- Phase 02 -->
+          <article class="roadmap-phase roadmap-phase--active">
+            <div class="roadmap-phase-header">
+              <span class="roadmap-phase-num">02</span>
+              <span class="roadmap-phase-badge roadmap-phase-badge--active">Em andamento</span>
+            </div>
+            <div class="roadmap-phase-body">
+              <h3 class="roadmap-phase-title">Construção e Validação</h3>
+              <p class="roadmap-phase-desc">Desenhamos, testamos e refinamos a solução para que ela funcione com segurança no seu contexto.</p>
+              <ul class="roadmap-tasks" aria-label="Entregas desta fase">
+                <li class="roadmap-task roadmap-task--done">
+                  <span class="roadmap-task-icon roadmap-task-icon--done" aria-hidden="true">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>
+                  </span>
+                  <span class="roadmap-task-label">Estruturação dos fluxos</span>
+                </li>
+                <li class="roadmap-task roadmap-task--active">
+                  <span class="roadmap-task-icon roadmap-task-icon--active" aria-hidden="true">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="4"/><circle cx="6" cy="6" r="1.5" fill="currentColor" stroke="none"/></svg>
+                  </span>
+                  <span class="roadmap-task-label">Testes e ajustes</span>
+                </li>
+                <li class="roadmap-task roadmap-task--next">
+                  <span class="roadmap-task-icon roadmap-task-icon--next" aria-hidden="true">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="4"/></svg>
+                  </span>
+                  <span class="roadmap-task-label">Validação da experiência</span>
+                </li>
+              </ul>
+            </div>
+            <div class="roadmap-phase-footer">
+              <span class="roadmap-output-dot" aria-hidden="true"></span>
+              <span class="roadmap-output-label">Entrega: automação validada</span>
+            </div>
+          </article>
+
+          <!-- Phase 03 -->
+          <article class="roadmap-phase roadmap-phase--next">
+            <div class="roadmap-phase-header">
+              <span class="roadmap-phase-num">03</span>
+              <span class="roadmap-phase-badge roadmap-phase-badge--next">Go-live</span>
+            </div>
+            <div class="roadmap-phase-body">
+              <h3 class="roadmap-phase-title">Implementação e Evolução</h3>
+              <p class="roadmap-phase-desc">Colocamos a solução em operação e acompanhamos sua performance para evoluir com o negócio.</p>
+              <ul class="roadmap-tasks" aria-label="Entregas desta fase">
+                <li class="roadmap-task roadmap-task--next">
+                  <span class="roadmap-task-icon roadmap-task-icon--next" aria-hidden="true">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="4"/></svg>
+                  </span>
+                  <span class="roadmap-task-label">Go-live assistido</span>
+                </li>
+                <li class="roadmap-task roadmap-task--next">
+                  <span class="roadmap-task-icon roadmap-task-icon--next" aria-hidden="true">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="4"/></svg>
+                  </span>
+                  <span class="roadmap-task-label">Monitoramento inicial</span>
+                </li>
+                <li class="roadmap-task roadmap-task--next">
+                  <span class="roadmap-task-icon roadmap-task-icon--next" aria-hidden="true">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="4"/></svg>
+                  </span>
+                  <span class="roadmap-task-label">Otimizações contínuas</span>
+                </li>
+              </ul>
+            </div>
+            <div class="roadmap-phase-footer">
+              <span class="roadmap-output-dot" aria-hidden="true"></span>
+              <span class="roadmap-output-label">Entrega: sistema em produção</span>
+            </div>
+          </article>
+
         </div>
       </div>
 
@@ -536,99 +3001,159 @@
 
 
   <!-- ══════════════════════════════════════════
-       BENEFÍCIOS
+       BENEFÍCIOS / RESULTADOS
   ══════════════════════════════════════════ -->
   <section class="section section-alt" id="benefits" aria-labelledby="benefits-title">
     <div class="container">
-      <div class="benefits-layout">
 
-        <!-- Texto -->
-        <div>
-          <span class="eyebrow reveal">Por que automatizar</span>
-          <h2 class="section-title heading-2 reveal reveal-delay-1" id="benefits-title" style="margin-top: var(--space-4);">
-            Resultados reais<br>para sua empresa
-          </h2>
-          <p class="body-l text-secondary reveal reveal-delay-2" style="margin-top: var(--space-4); max-width: 480px; line-height: var(--lh-body-l);">
-            Nossos clientes transformam dados em decisões mais inteligentes e liberam o time para o que realmente importa: crescer.
-          </p>
+      <!-- Header -->
+      <div class="ben-header reveal">
+        <span class="eyebrow">Benefícios reais</span>
+        <h2 class="section-title reveal reveal-delay-1" id="benefits-title">
+          Resultados que vão além<br>da automação
+        </h2>
+        <p class="section-desc reveal reveal-delay-2">
+          Automação não é só sobre tecnologia, é sobre ganhar tempo, reduzir desperdícios e operar melhor.
+        </p>
+      </div>
 
-          <div style="margin-top: var(--space-8);">
-            <div class="benefit-item reveal reveal-delay-1">
-              <div class="benefit-icon" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
-                </svg>
-              </div>
-              <div class="benefit-text">
-                <h4>Reduza custos operacionais</h4>
-                <p>Menos horas em tarefas repetitivas. Seu time foca no que gera valor real.</p>
-              </div>
-            </div>
+      <!-- 4-card grid -->
+      <div class="ben-grid">
 
-            <div class="benefit-item reveal reveal-delay-2">
-              <div class="benefit-icon" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
-                </svg>
-              </div>
-              <div class="benefit-text">
-                <h4>Decisões baseadas em dados</h4>
-                <p>Transforme informações em ações estratégicas com relatórios automáticos e inteligentes.</p>
-              </div>
-            </div>
-
-            <div class="benefit-item reveal reveal-delay-3">
-              <div class="benefit-icon" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                </svg>
-              </div>
-              <div class="benefit-text">
-                <h4>Aumento de produtividade</h4>
-                <p>Processos que levavam horas passam a acontecer em minutos, com mais precisão.</p>
-              </div>
-            </div>
+        <!-- Card 1: Redução de custos -->
+        <article class="ben-card reveal reveal-delay-1">
+          <div class="ben-illus" aria-hidden="true">
+            <svg width="160" height="96" viewBox="0 0 160 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="18" y="22" width="22" height="54" rx="3" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+              <rect x="50" y="34" width="22" height="42" rx="3" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+              <rect x="82" y="46" width="22" height="30" rx="3" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+              <rect x="114" y="57" width="22" height="19" rx="3" fill="rgba(234,88,12,0.18)" stroke="rgba(234,88,12,0.45)" stroke-width="1"/>
+              <line x1="12" y1="76" x2="148" y2="76" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+              <polyline points="29,22 61,34 93,46 125,57" stroke="rgba(234,88,12,0.50)" stroke-width="1.5" stroke-dasharray="3 3" fill="none"/>
+              <polyline points="118,55 125,57 122,63" stroke="rgba(234,88,12,0.85)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="29" cy="22" r="2.5" fill="rgba(255,255,255,0.20)"/>
+              <circle cx="61" cy="34" r="2.5" fill="rgba(255,255,255,0.20)"/>
+              <circle cx="93" cy="46" r="2.5" fill="rgba(255,255,255,0.20)"/>
+              <circle cx="125" cy="57" r="3.5" fill="rgba(234,88,12,0.90)"/>
+              <rect x="104" y="8" width="44" height="16" rx="4" fill="rgba(234,88,12,0.10)" stroke="rgba(234,88,12,0.22)" stroke-width="1"/>
+              <text x="126" y="19" text-anchor="middle" font-size="8" font-family="Satoshi,sans-serif" font-weight="600" fill="rgba(234,88,12,0.90)" letter-spacing="0.04em">−30% custo</text>
+            </svg>
           </div>
-        </div>
-
-        <!-- Metric card -->
-        <div class="reveal reveal-delay-2">
-          <div class="metric-card">
-            <p class="label-text text-muted" style="margin-bottom: var(--space-6);">Impacto médio por cliente</p>
-
-            <div class="metric-row">
-              <span class="metric-label">Redução de custos</span>
-              <div class="metric-bar-track">
-                <div class="metric-bar-fill" data-width="65"></div>
-              </div>
-              <span class="metric-value">−65%</span>
-            </div>
-
-            <div class="metric-row">
-              <span class="metric-label">Produtividade</span>
-              <div class="metric-bar-track">
-                <div class="metric-bar-fill" data-width="80"></div>
-              </div>
-              <span class="metric-value">+3x</span>
-            </div>
-
-            <div class="metric-row">
-              <span class="metric-label">Tempo de resposta</span>
-              <div class="metric-bar-track">
-                <div class="metric-bar-fill" data-width="90"></div>
-              </div>
-              <span class="metric-value">−90%</span>
-            </div>
-
-            <div class="metric-row">
-              <span class="metric-label">Conversão de leads</span>
-              <div class="metric-bar-track">
-                <div class="metric-bar-fill" data-width="40"></div>
-              </div>
-              <span class="metric-value">+40%</span>
-            </div>
+          <div class="ben-body">
+            <p class="ben-card-tag">Eficiência</p>
+            <h3 class="ben-card-title">Redução de custos</h3>
+            <p class="ben-card-desc">Otimize processos e reduza gastos operacionais com automação inteligente.</p>
           </div>
-        </div>
+        </article>
+
+        <!-- Card 2: Mais produtividade -->
+        <article class="ben-card reveal reveal-delay-2">
+          <div class="ben-illus" aria-hidden="true">
+            <svg width="160" height="96" viewBox="0 0 160 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="benProcGrad" x1="0" y1="0" x2="0" y2="96" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#EA580C" stop-opacity="0"/>
+                  <stop offset="28%" stop-color="#EA580C" stop-opacity="0.85"/>
+                  <stop offset="72%" stop-color="#EA580C" stop-opacity="0.85"/>
+                  <stop offset="100%" stop-color="#EA580C" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- Input lanes (left) -->
+              <rect x="12" y="16" width="30" height="10" rx="3" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+              <rect x="48" y="16" width="20" height="10" rx="3" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+              <rect x="12" y="43" width="24" height="10" rx="3" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+              <rect x="42" y="43" width="26" height="10" rx="3" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+              <rect x="12" y="70" width="34" height="10" rx="3" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+              <rect x="52" y="70" width="16" height="10" rx="3" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+              <!-- Processor beam -->
+              <rect x="78" y="8" width="4" height="80" rx="2" fill="url(#benProcGrad)"/>
+              <!-- Output lanes (right) — orange tinted -->
+              <rect x="90" y="16" width="58" height="10" rx="3" fill="rgba(234,88,12,0.10)" stroke="rgba(234,88,12,0.28)" stroke-width="1"/>
+              <rect x="90" y="43" width="58" height="10" rx="3" fill="rgba(234,88,12,0.10)" stroke="rgba(234,88,12,0.28)" stroke-width="1"/>
+              <rect x="90" y="70" width="58" height="10" rx="3" fill="rgba(234,88,12,0.10)" stroke="rgba(234,88,12,0.28)" stroke-width="1"/>
+              <!-- Check marks -->
+              <polyline points="98,20 101,23 107,18" stroke="rgba(234,88,12,0.80)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="98,47 101,50 107,45" stroke="rgba(234,88,12,0.80)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="98,74 101,77 107,72" stroke="rgba(234,88,12,0.80)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="ben-body">
+            <p class="ben-card-tag">Performance</p>
+            <h3 class="ben-card-title">Mais produtividade</h3>
+            <p class="ben-card-desc">Automatize tarefas repetitivas e aumente a eficiência do time.</p>
+          </div>
+        </article>
+
+        <!-- Card 3: Melhores resultados -->
+        <article class="ben-card reveal reveal-delay-3">
+          <div class="ben-illus" aria-hidden="true">
+            <svg width="160" height="96" viewBox="0 0 160 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="benAreaGrad" x1="0" y1="0" x2="0" y2="96" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#EA580C" stop-opacity="0.18"/>
+                  <stop offset="100%" stop-color="#EA580C" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- Grid lines -->
+              <line x1="12" y1="24" x2="148" y2="24" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+              <line x1="12" y1="48" x2="148" y2="48" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+              <line x1="12" y1="72" x2="148" y2="72" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+              <!-- Area fill -->
+              <path d="M18,70 L45,55 L80,40 L112,25 L142,14 L142,80 L18,80 Z" fill="url(#benAreaGrad)"/>
+              <!-- Base sparkline (grey) -->
+              <polyline points="18,70 45,55 80,40" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- Highlighted segment (orange) -->
+              <polyline points="80,40 112,25 142,14" stroke="rgba(234,88,12,0.90)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- Nodes -->
+              <circle cx="18" cy="70" r="3" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+              <circle cx="45" cy="55" r="3" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+              <circle cx="80" cy="40" r="3.5" fill="rgba(255,255,255,0.20)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
+              <circle cx="112" cy="25" r="4" fill="rgba(234,88,12,0.40)" stroke="rgba(234,88,12,0.65)" stroke-width="1.5"/>
+              <circle cx="142" cy="14" r="5.5" fill="rgba(234,88,12,0.15)" stroke="rgba(234,88,12,0.85)" stroke-width="1.5"/>
+              <circle cx="142" cy="14" r="2.5" fill="rgba(234,88,12,1)"/>
+              <!-- Baseline -->
+              <line x1="12" y1="80" x2="148" y2="80" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+            </svg>
+          </div>
+          <div class="ben-body">
+            <p class="ben-card-tag">Crescimento</p>
+            <h3 class="ben-card-title">Melhores resultados</h3>
+            <p class="ben-card-desc">Use IA para acelerar respostas, melhorar processos e gerar mais performance.</p>
+          </div>
+        </article>
+
+        <!-- Card 4: Mais tempo para crescer -->
+        <article class="ben-card reveal reveal-delay-4">
+          <div class="ben-illus" aria-hidden="true">
+            <svg width="160" height="96" viewBox="0 0 160 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Clock circle -->
+              <circle cx="58" cy="48" r="26" stroke="rgba(255,255,255,0.09)" stroke-width="1.5" fill="rgba(255,255,255,0.02)"/>
+              <circle cx="58" cy="48" r="26" stroke="rgba(234,88,12,0.22)" stroke-width="1.5" stroke-dasharray="28 6" stroke-dashoffset="-8" fill="none"/>
+              <!-- Hour hand -->
+              <line x1="58" y1="48" x2="58" y2="28" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-linecap="round"/>
+              <!-- Minute hand (orange) -->
+              <line x1="58" y1="48" x2="74" y2="56" stroke="rgba(234,88,12,0.85)" stroke-width="1.5" stroke-linecap="round"/>
+              <!-- Center dot -->
+              <circle cx="58" cy="48" r="2.5" fill="rgba(234,88,12,1)"/>
+              <!-- Growth arrows (right) -->
+              <line x1="96" y1="22" x2="138" y2="13" stroke="rgba(234,88,12,0.60)" stroke-width="1.5" stroke-linecap="round"/>
+              <polyline points="131,11 138,13 135,19" stroke="rgba(234,88,12,0.85)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="96" y1="48" x2="138" y2="48" stroke="rgba(234,88,12,0.65)" stroke-width="1.5" stroke-linecap="round"/>
+              <polyline points="131,44 138,48 131,52" stroke="rgba(234,88,12,0.90)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="96" y1="74" x2="138" y2="83" stroke="rgba(234,88,12,0.35)" stroke-width="1.5" stroke-linecap="round"/>
+              <polyline points="131,80 138,83 134,76" stroke="rgba(234,88,12,0.55)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- Origin dots -->
+              <circle cx="96" cy="22" r="2.5" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.22)" stroke-width="1"/>
+              <circle cx="96" cy="48" r="3" fill="rgba(234,88,12,0.22)" stroke="rgba(234,88,12,0.45)" stroke-width="1"/>
+              <circle cx="96" cy="74" r="2.5" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.22)" stroke-width="1"/>
+            </svg>
+          </div>
+          <div class="ben-body">
+            <p class="ben-card-tag">Liberdade</p>
+            <h3 class="ben-card-title">Mais tempo para crescer</h3>
+            <p class="ben-card-desc">Libere sua equipe do operacional e foque no que move o negócio.</p>
+          </div>
+        </article>
 
       </div>
     </div>
@@ -640,104 +3165,103 @@
   ══════════════════════════════════════════ -->
   <section class="section" id="faq" aria-labelledby="faq-title">
     <div class="container">
-      <div class="faq-layout">
 
-        <!-- Lado esquerdo -->
-        <div>
-          <span class="eyebrow reveal">Dúvidas</span>
-          <h2 class="section-title heading-2 reveal reveal-delay-1" id="faq-title" style="margin-top: var(--space-4);">
+      <div class="faq-split reveal">
+
+        <!-- ── Left: header + support card ── -->
+        <div class="faq-left">
+          <span class="eyebrow">Dúvidas</span>
+          <h2 class="faq-left-title" id="faq-title">
             Perguntas<br>frequentes
           </h2>
-          <p class="body-m text-secondary reveal reveal-delay-2" style="margin-top: var(--space-4); line-height: var(--lh-body-l);">
-            Tem mais dúvidas?
-            <a href="#contact" style="color: var(--color-primary); font-weight: var(--fw-medium);">Fale com a gente →</a>
+          <p class="faq-left-desc">
+            Se ainda restou alguma dúvida sobre como funciona a automação com IA, aqui estão algumas respostas rápidas.
           </p>
+
+          <div class="faq-support-card">
+            <p class="faq-support-heading">Ainda tem dúvidas?</p>
+            <p class="faq-support-sub">Fale diretamente com a nossa equipe antes de começar.</p>
+            <a href="#contact" class="faq-support-btn">Falar com a Oiko</a>
+          </div>
         </div>
 
-        <!-- Accordion -->
-        <div class="faq-list reveal reveal-delay-1" role="list">
+        <!-- ── Right: accordion ── -->
+        <div class="faq-right">
+          <div class="faq-list" role="list">
 
-          <div class="faq-item" role="listitem">
-            <button class="faq-trigger" aria-expanded="false">
-              Quanto tempo leva para implementar uma automação?
-              <span class="faq-icon" aria-hidden="true">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-              </span>
-            </button>
-            <div class="faq-content" role="region">
-              <div class="faq-body">
-                Depende da complexidade. Automações simples, como atendimento via WhatsApp, ficam prontas em 5 a 10 dias úteis. Projetos mais complexos com integração de múltiplos sistemas levam de 3 a 6 semanas. Sempre começamos com um diagnóstico para definir o prazo exato.
+            <div class="faq-item" role="listitem">
+              <button class="faq-trigger" aria-expanded="false">
+                Isso funciona para qualquer empresa?
+                <span class="faq-icon" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </span>
+              </button>
+              <div class="faq-content" role="region">
+                <div class="faq-body">
+                  Nossas soluções são ideais para negócios com processos repetitivos, atendimento, vendas ou operação manual. Se existe rotina, existe oportunidade de automação.
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="faq-item" role="listitem">
-            <button class="faq-trigger" aria-expanded="false">
-              Preciso ter conhecimento técnico para usar as automações?
-              <span class="faq-icon" aria-hidden="true">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-              </span>
-            </button>
-            <div class="faq-content" role="region">
-              <div class="faq-body">
-                Não. Desenvolvemos tudo pensando na facilidade de uso do seu time. Oferecemos treinamento completo durante a implementação e suporte contínuo para garantir que todos operem as ferramentas com confiança.
+            <div class="faq-item" role="listitem">
+              <button class="faq-trigger" aria-expanded="false">
+                Vocês integram com ferramentas que eu já uso?
+                <span class="faq-icon" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </span>
+              </button>
+              <div class="faq-content" role="region">
+                <div class="faq-body">
+                  Sim. Podemos conectar CRMs, agendas, WhatsApp, formulários, planilhas e outros sistemas que você já utiliza no dia a dia.
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="faq-item" role="listitem">
-            <button class="faq-trigger" aria-expanded="false">
-              As automações funcionam com as ferramentas que já uso?
-              <span class="faq-icon" aria-hidden="true">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-              </span>
-            </button>
-            <div class="faq-content" role="region">
-              <div class="faq-body">
-                Sim. Integramos com as principais ferramentas: WhatsApp Business, Google Workspace, CRMs (HubSpot, Pipedrive, RD Station), ERPs, planilhas e muito mais. No diagnóstico inicial mapeamos o seu stack completo.
+            <div class="faq-item" role="listitem">
+              <button class="faq-trigger" aria-expanded="false">
+                A IA responde clientes sozinha?
+                <span class="faq-icon" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </span>
+              </button>
+              <div class="faq-content" role="region">
+                <div class="faq-body">
+                  Sim, dependendo da solução. Criamos fluxos que atendem, qualificam e direcionam automaticamente — com ou sem intervenção humana, conforme o seu modelo de negócio.
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="faq-item" role="listitem">
-            <button class="faq-trigger" aria-expanded="false">
-              Como é feita a segurança dos dados?
-              <span class="faq-icon" aria-hidden="true">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-              </span>
-            </button>
-            <div class="faq-content" role="region">
-              <div class="faq-body">
-                Segurança é prioridade. Todos os dados são criptografados em trânsito e em repouso. Seguimos as diretrizes da LGPD e utilizamos apenas provedores com certificações reconhecidas. Você mantém total controle e propriedade dos seus dados.
+            <div class="faq-item" role="listitem">
+              <button class="faq-trigger" aria-expanded="false">
+                Quanto tempo leva para implementar?
+                <span class="faq-icon" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </span>
+              </button>
+              <div class="faq-content" role="region">
+                <div class="faq-body">
+                  Depende da complexidade do projeto, mas buscamos soluções rápidas e bem estruturadas. Priorizamos entregas ágeis com clareza em cada etapa desde o início.
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="faq-item" role="listitem">
-            <button class="faq-trigger" aria-expanded="false">
-              Qual é o modelo de contratação?
-              <span class="faq-icon" aria-hidden="true">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-              </span>
-            </button>
-            <div class="faq-content" role="region">
-              <div class="faq-body">
-                Trabalhamos com projetos sob medida. Após o diagnóstico gratuito, apresentamos uma proposta personalizada com escopo, prazo e investimento. Não cobramos taxa de setup oculta — o preço apresentado é o final.
+            <div class="faq-item" role="listitem">
+              <button class="faq-trigger" aria-expanded="false">
+                Preciso trocar meus sistemas atuais?
+                <span class="faq-icon" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </span>
+              </button>
+              <div class="faq-content" role="region">
+                <div class="faq-body">
+                  Na maioria dos casos, não. Nosso objetivo é integrar e melhorar o que você já usa, sem disrução na operação atual.
+                </div>
               </div>
             </div>
-          </div>
 
+          </div>
         </div>
+
       </div>
     </div>
   </section>
