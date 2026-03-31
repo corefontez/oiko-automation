@@ -165,7 +165,7 @@
 
 .navbar-cta:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(234, 88, 12, 0.35) !important;
+  box-shadow: 0 4px 16px rgba(207, 255, 4, 0.28) !important;
 }
 
 .navbar-cta:active {
@@ -355,7 +355,7 @@
 /* Primário */
 .btn-primary {
   background: var(--color-primary);
-  color: var(--text-primary);
+  color: var(--color-text-on-brand);
   border-color: var(--color-primary);
 }
 
@@ -421,9 +421,9 @@
   line-height: 1.2;
   letter-spacing: var(--ls-label);
   text-transform: uppercase;
-  color: var(--color-accent-soft);
-  background: rgba(234, 88, 12, 0.10);
-  border: 1px solid rgba(234, 88, 12, 0.22);
+  color: var(--color-brand-primary);
+  background: var(--color-brand-soft);
+  border: 1px solid var(--color-brand-border);
   border-radius: 100px;
   padding: 6px 14px;
 }
@@ -487,14 +487,14 @@
 }
 
 .card:hover {
-  border-color: rgba(234, 88, 12, 0.28);
+  border-color: rgba(207, 255, 4, 0.28);
   box-shadow: var(--shadow-card), var(--glow-primary-subtle);
   transform: translateY(-2px);
 }
 
 /* Card com destaque */
 .card-featured {
-  border-color: rgba(234, 88, 12, 0.30);
+  border-color: rgba(207, 255, 4, 0.30);
   box-shadow: var(--glow-primary-subtle);
 }
 
@@ -502,8 +502,8 @@
 .card-icon {
   width: 48px;
   height: 48px;
-  background: rgba(234, 88, 12, 0.10);
-  border: 1px solid rgba(234, 88, 12, 0.20);
+  background: rgba(207, 255, 4, 0.10);
+  border: 1px solid rgba(207, 255, 4, 0.20);
   border-radius: 14px;
   display: flex;
   align-items: center;
@@ -515,8 +515,8 @@
 }
 
 .card:hover .card-icon {
-  background: rgba(234, 88, 12, 0.18);
-  border-color: rgba(234, 88, 12, 0.35);
+  background: rgba(207, 255, 4, 0.18);
+  border-color: rgba(207, 255, 4, 0.35);
 }
 
 .card-number {
@@ -611,7 +611,7 @@
   font-weight: var(--fw-extrabold);
   line-height: 1;
   letter-spacing: -0.04em;
-  background: linear-gradient(135deg, var(--color-primary), rgba(234, 88, 12, 0.25));
+  background: linear-gradient(135deg, var(--color-primary), rgba(207, 255, 4, 0.25));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -772,7 +772,7 @@
 
 .input:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.12);
+  box-shadow: 0 0 0 3px rgba(207, 255, 4, 0.12);
 }
 
 textarea.input {
@@ -793,7 +793,7 @@ textarea.input {
 .divider-glow {
   background: linear-gradient(90deg,
     transparent,
-    rgba(234, 88, 12, 0.35),
+    rgba(207, 255, 4, 0.35),
     transparent
   );
 }
@@ -924,7 +924,7 @@ textarea.input {
   transform: translateX(-50%);
   width: 600px;
   height: 300px;
-  background: radial-gradient(ellipse at center top, rgba(234, 88, 12, 0.07) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center top, rgba(207, 255, 4, 0.07) 0%, transparent 70%);
   pointer-events: none;
 }
 
