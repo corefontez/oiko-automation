@@ -180,9 +180,9 @@
   flex-direction: column;
   justify-content: center;
   gap: 5px;
-  width: 38px;
-  height: 38px;
-  padding: 8px;
+  width: 44px;
+  height: 44px;
+  padding: 11px;
   cursor: pointer;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -193,6 +193,11 @@
 
 .navbar-toggle:hover {
   background: rgba(255, 255, 255, 0.08);
+}
+
+.navbar-toggle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .navbar-toggle span {
@@ -273,7 +278,7 @@
     font-size: 15px;
     font-weight: var(--fw-medium);
     color: var(--text-secondary);
-    padding: 12px var(--space-4);
+    padding: 14px var(--space-4);
     border-radius: 10px;
     letter-spacing: -0.01em;
     transition: background 0.15s var(--ease-out), color 0.15s var(--ease-out);
@@ -587,6 +592,7 @@
   color: var(--text-secondary);
   line-height: var(--lh-body-l);
   max-width: 600px;
+  text-wrap: pretty;
 }
 
 .section-header.centered .section-desc {
@@ -675,6 +681,12 @@
 
 .faq-trigger:hover {
   background: rgba(255, 255, 255, 0.025);
+}
+
+.faq-trigger:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+  border-radius: 4px;
 }
 
 .faq-trigger.active {
@@ -932,5 +944,42 @@ textarea.input {
   .cta-block {
     padding: var(--space-10) var(--space-6);
     border-radius: var(--radius-container);
+  }
+
+  .cta-block::after {
+    display: none;
+  }
+}
+
+
+/* ─── RESPONSIVE: TABLET + MOBILE ────────── */
+
+@media (max-width: 904px) {
+  .stat-value {
+    font-size: 42px;
+  }
+
+  .step-number {
+    font-size: 48px;
+  }
+}
+
+@media (max-width: 599px) {
+  .stat-value {
+    font-size: 36px;
+  }
+
+  .btn-lg {
+    padding: 14px 24px;
+    font-size: 16px;
+  }
+
+  .btn-sm {
+    min-height: 44px;
+    padding: 12px 18px;
+  }
+
+  .step-number {
+    font-size: 40px;
   }
 }

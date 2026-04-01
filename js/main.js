@@ -27,11 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const navActions = document.getElementById('navActions');
 
   if (toggle && navLinks) {
+    const updateMenuHeight = () => {
+      // Set CSS var so navActions positions itself right below navLinks
+      const h = navLinks.offsetHeight;
+      document.documentElement.style.setProperty('--mobile-menu-height', h + 'px');
+    };
+
     toggle.addEventListener('click', () => {
       const isOpen = navLinks.classList.toggle('open');
       navActions?.classList.toggle('open', isOpen);
-      toggle.setAttribute('aria-expanded', isOpen);
+      toggle.setAttribute('aria-expanded', String(isOpen));
       document.body.style.overflow = isOpen ? 'hidden' : '';
+      if (isOpen) requestAnimationFrame(updateMenuHeight);
     });
 
     // Fechar ao clicar em link

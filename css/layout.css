@@ -272,7 +272,7 @@
 
 .hero-hat-badge {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 7px;
   font-size: 11px;
   font-weight: 600;
@@ -283,6 +283,7 @@
   border: 1px solid rgba(255,255,255,0.07);
   border-radius: 8px;
   padding: 6px 12px;
+  max-width: 100%;
 }
 
 .hero-hat-dot {
@@ -290,6 +291,7 @@
   border-radius: 50%;
   background: var(--color-primary);
   flex-shrink: 0;
+  margin-top: 3px;
   animation: badge-pulse 2.4s ease-in-out infinite;
 }
 
@@ -381,6 +383,12 @@
   .hero-grid {
     grid-template-columns: 1fr;
   }
+  .hero-desc {
+    font-size: 18px;
+  }
+  .hero-stats-section {
+    gap: var(--space-12);
+  }
 }
 
 @media (max-width: 599px) {
@@ -389,12 +397,17 @@
     padding-bottom: var(--space-16);
   }
 
+  .hero-bg-glow {
+    display: none;
+  }
+
   .hero-title {
     font-size: 32px;
   }
 
   .hero-desc {
     max-width: 100%;
+    font-size: 17px;
   }
 
   .hero-actions {
@@ -411,6 +424,26 @@
     flex-wrap: wrap;
     gap: var(--space-6);
     justify-content: center;
+  }
+}
+
+@media (max-width: 390px) {
+  .hero-title {
+    font-size: 28px;
+  }
+  .hero-desc {
+    font-size: 16px;
+  }
+  .hero-hat-badge {
+    white-space: normal;
+    line-height: 1.5;
+    text-align: left;
+  }
+  .section {
+    padding: 60px 0;
+  }
+  .section-lg {
+    padding: 72px 0;
   }
 }
 
@@ -444,6 +477,12 @@
 
 .footer-links a:hover {
   color: var(--text-primary);
+}
+
+.footer-links a:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: 3px;
 }
 
 .footer-copy {

@@ -11,6 +11,8 @@
 
   <!-- Fonte: Satoshi via Fontshare -->
   <link rel="preconnect" href="https://api.fontshare.com">
+  <link rel="dns-prefetch" href="https://api.fontshare.com">
+  <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700,800&display=swap" rel="stylesheet">
 
   <!-- Design System -->
@@ -34,25 +36,36 @@
       to   { opacity: 1; transform: translateX(0); }
     }
 
+    /* ── Panel wrap: stacked floating layers ── */
     .hero-panel {
-      background: rgba(29, 33, 43, 0.65);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      padding: 24px;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ── Shared glass card base ─────────────── */
+    .panel-card {
+      background: rgba(26, 30, 40, 0.58);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.025) inset,
+        0 8px 32px rgba(0,0,0,0.32);
+      padding: 14px 16px;
       position: relative;
       overflow: hidden;
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,0.03) inset,
-        0 24px 64px rgba(0,0,0,0.45);
     }
-    .hero-panel::after {
+
+    /* Subtle ambient glow per card */
+    .panel-card--flow::after {
       content: '';
       position: absolute;
-      bottom: -80px; right: -80px;
-      width: 320px; height: 320px;
-      background: radial-gradient(circle, rgba(207,255,4,0.10) 0%, transparent 65%);
+      bottom: -40px; right: -40px;
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, rgba(207,255,4,0.08) 0%, transparent 65%);
       pointer-events: none;
     }
 
@@ -61,7 +74,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 18px;
+      margin-bottom: 10px;
     }
     .panel-status {
       display: flex;
@@ -69,15 +82,15 @@
       gap: 7px;
     }
     .panel-status-dot {
-      width: 8px; height: 8px;
+      width: 7px; height: 7px;
       border-radius: 50%;
       background: #22c55e;
       flex-shrink: 0;
-      box-shadow: 0 0 8px rgba(34,197,94,0.5);
+      box-shadow: 0 0 7px rgba(34,197,94,0.5);
       animation: live-pulse 2s ease-in-out infinite;
     }
     .panel-status-label {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 500;
       color: var(--text-primary);
       letter-spacing: -0.01em;
@@ -92,9 +105,9 @@
       text-transform: uppercase;
       color: #22c55e;
       background: rgba(34,197,94,0.08);
-      border: 1px solid rgba(34,197,94,0.18);
+      border: 1px solid rgba(34,197,94,0.16);
       border-radius: 6px;
-      padding: 4px 8px;
+      padding: 3px 8px;
     }
     .panel-live-dot {
       width: 5px; height: 5px;
@@ -108,11 +121,6 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      background: rgba(21,24,33,0.55);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 14px;
-      padding: 14px 12px;
-      margin-bottom: 16px;
     }
     .flow-node {
       display: flex;
@@ -122,9 +130,9 @@
       flex: 1;
     }
     .flow-icon {
-      width: 34px; height: 34px;
+      width: 32px; height: 32px;
       border-radius: 9px;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.045);
       border: 1px solid rgba(255,255,255,0.07);
       display: flex;
       align-items: center;
@@ -149,28 +157,30 @@
       letter-spacing: 0.01em;
     }
     .flow-arrow {
-      color: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.14);
       font-size: 14px;
       flex-shrink: 0;
       margin-bottom: 14px;
     }
 
-    /* metrics */
+    /* metrics strip */
     .panel-metrics {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
-      margin-bottom: 18px;
     }
     .panel-metric {
-      background: rgba(21,24,33,0.55);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 11px;
-      padding: 11px 12px;
+      background: rgba(20,23,32,0.60);
+      border: 1px solid rgba(255,255,255,0.055);
+      border-radius: 12px;
+      padding: 12px 14px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.24);
     }
     .metric-val {
       display: block;
-      font-size: 19px;
+      font-size: 20px;
       font-weight: 700;
       letter-spacing: -0.03em;
       color: var(--text-primary);
@@ -184,13 +194,6 @@
       line-height: 1.35;
     }
 
-    /* separator */
-    .panel-sep {
-      height: 1px;
-      background: rgba(255,255,255,0.05);
-      margin-bottom: 16px;
-    }
-
     /* activity feed */
     .feed-label {
       font-size: 10px;
@@ -198,7 +201,7 @@
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--text-muted);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .feed-item {
       display: flex;
@@ -220,7 +223,7 @@
       flex-shrink: 0;
     }
     .feed-text {
-      font-size: 12.5px;
+      font-size: 12px;
       color: var(--text-secondary);
       flex: 1;
       letter-spacing: -0.005em;
@@ -230,6 +233,9 @@
       color: var(--text-muted);
       font-variant-numeric: tabular-nums;
     }
+
+    /* panel-sep no longer needed, kept for compat */
+    .panel-sep { display: none; }
 
     /* ── SERVICES GRID LAYOUT ────────────────── */
     .services-grid {
@@ -261,12 +267,14 @@
       transition: opacity var(--transition-md);
     }
 
-    .service-card:hover {
-      background: rgba(29, 33, 43, 0.95);
-    }
+    @media (hover: hover) {
+      .service-card:hover {
+        background: rgba(29, 33, 43, 0.95);
+      }
 
-    .service-card:hover::after {
-      opacity: 1;
+      .service-card:hover::after {
+        opacity: 1;
+      }
     }
 
     .service-num {
@@ -580,13 +588,19 @@
       opacity: 0.80;
     }
 
-    .roadmap-phase:hover {
-      border-color: rgba(207,255,4,0.30);
-      transform: translateY(-4px);
-      box-shadow:
-        0 20px 56px rgba(0,0,0,0.32),
-        0 0 0 1px rgba(207,255,4,0.06) inset;
-      opacity: 1;
+    @media (hover: hover) {
+      .roadmap-phase:hover {
+        border-color: rgba(207,255,4,0.30);
+        transform: translateY(-3px);
+        box-shadow:
+          0 20px 56px rgba(0,0,0,0.32),
+          0 0 0 1px rgba(207,255,4,0.06) inset;
+        opacity: 1;
+      }
+
+      .roadmap-phase--active:hover {
+        transform: translateY(-2px);
+      }
     }
 
     /* ── Phase header ────────────────────────── */
@@ -869,6 +883,7 @@
       line-height: 1.14;
       color: var(--text-primary);
       margin-bottom: var(--space-4);
+      text-wrap: pretty;
     }
 
     .faq-left-desc {
@@ -935,6 +950,12 @@
     .faq-support-btn:hover {
       background: rgba(255,255,255,0.07);
       border-color: rgba(255,255,255,0.16);
+    }
+
+    .faq-support-btn:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+      border-radius: var(--radius-button);
     }
 
     /* ── Right: accordion ───────────────────── */
@@ -1067,7 +1088,7 @@
     }
 
     .faq-right .faq-content.open {
-      max-height: 400px !important;
+      max-height: 640px !important;
       opacity: 1;
     }
 
@@ -1161,16 +1182,18 @@
       z-index: 1;
     }
 
-    .ben-card:hover {
-      border-color: rgba(207,255,4,0.28);
-      transform: translateY(-4px);
-      box-shadow:
-        0 16px 48px rgba(0,0,0,0.35),
-        0 0 0 1px rgba(207,255,4,0.06) inset;
-    }
+    @media (hover: hover) {
+      .ben-card:hover {
+        border-color: rgba(207,255,4,0.28);
+        transform: translateY(-4px);
+        box-shadow:
+          0 16px 48px rgba(0,0,0,0.35),
+          0 0 0 1px rgba(207,255,4,0.06) inset;
+      }
 
-    .ben-card:hover::before {
-      background: linear-gradient(90deg, transparent, rgba(207,255,4,0.65), transparent);
+      .ben-card:hover::before {
+        background: linear-gradient(90deg, transparent, rgba(207,255,4,0.65), transparent);
+      }
     }
 
     .ben-illus {
@@ -1199,8 +1222,10 @@
       transition: transform 0.40s cubic-bezier(0.16,1,0.3,1);
     }
 
-    .ben-card:hover .ben-illus svg {
-      transform: translateY(-3px) scale(1.03);
+    @media (hover: hover) {
+      .ben-card:hover .ben-illus svg {
+        transform: translateY(-3px) scale(1.03);
+      }
     }
 
     .ben-body {
@@ -1261,11 +1286,36 @@
     .stack-content {
       position: relative;
       z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
-    .stack-content {
-      display: flex;
-      align-items: center;
+    .stack-content .eyebrow {
+      margin-bottom: var(--space-4);
+    }
+
+    .stack-content .eyebrow::before {
+      display: none;
+    }
+
+    .stack-content-title {
+      font-size: var(--font-size-h2);
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: var(--ls-h2);
+      line-height: var(--lh-h2);
+      color: var(--text-primary);
+      margin-bottom: var(--space-5);
+    }
+
+    .stack-content-desc {
+      font-size: var(--font-size-body-lg);
+      line-height: var(--lh-body-l);
+      color: var(--text-secondary);
+      letter-spacing: -0.005em;
+      max-width: 420px;
+      margin-bottom: var(--space-8);
+      text-wrap: pretty;
     }
 
     /* ── Benefits list ───────────────────────── */
@@ -1273,7 +1323,6 @@
       display: flex;
       flex-direction: column;
       gap: var(--space-4);
-      margin-top: var(--space-8);
     }
 
     .stack-benefit {
@@ -1567,13 +1616,15 @@
     .eco-node:nth-child(even) { animation-name: eco-float-b; }
     .eco-node:nth-child(3n)   { animation-name: eco-float-c; }
 
-    .eco-node:hover {
-      border-color: rgba(207, 255, 4, 0.42);
-      box-shadow:
-        0 6px 28px rgba(0,0,0,0.48),
-        0 0 22px rgba(207,255,4,0.14),
-        inset 0 1px 0 rgba(255,255,255,0.08);
-      transform: translateY(-2px) scale(1.03);
+    @media (hover: hover) {
+      .eco-node:hover {
+        border-color: rgba(207, 255, 4, 0.42);
+        box-shadow:
+          0 6px 28px rgba(0,0,0,0.48),
+          0 0 22px rgba(207,255,4,0.14),
+          inset 0 1px 0 rgba(255,255,255,0.08);
+        transform: translateY(-2px) scale(1.03);
+      }
     }
 
     .eco-node--accent {
@@ -1631,6 +1682,14 @@
         gap: var(--space-12);
       }
 
+      .stack-content-title {
+        font-size: clamp(28px, 5vw, 42px);
+      }
+
+      .stack-content-desc {
+        max-width: 560px;
+      }
+
       .stack-visual {
         justify-content: center;
       }
@@ -1656,6 +1715,17 @@
       .eco-container {
         transform: scale(0.58);
         margin: -106px auto;
+      }
+
+      .stack-content-desc {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .eco-container {
+        transform: scale(0.50);
+        margin: -120px auto;
       }
     }
 
@@ -1705,6 +1775,7 @@
       letter-spacing: -0.022em;
       color: var(--text-primary);
       margin-bottom: var(--space-4);
+      text-wrap: pretty;
     }
 
     .problem-desc {
@@ -1713,6 +1784,7 @@
       line-height: var(--lh-body-l);
       max-width: 620px;
       margin: 0 auto;
+      text-wrap: pretty;
     }
 
     /* ── Cards grid ──────────────────────────── */
@@ -1750,16 +1822,18 @@
       transition: opacity var(--transition-md);
     }
 
-    .problem-card:hover {
-      border-color: rgba(239, 68, 68, 0.22);
-      box-shadow:
-        0 8px 36px rgba(0,0,0,0.30),
-        0 0 0 1px rgba(239,68,68,0.06) inset;
-      transform: translateY(-3px);
-    }
+    @media (hover: hover) {
+      .problem-card:hover {
+        border-color: rgba(239, 68, 68, 0.22);
+        box-shadow:
+          0 8px 36px rgba(0,0,0,0.30),
+          0 0 0 1px rgba(239,68,68,0.06) inset;
+        transform: translateY(-3px);
+      }
 
-    .problem-card:hover::before {
-      opacity: 1;
+      .problem-card:hover::before {
+        opacity: 1;
+      }
     }
 
     /* Card number */
@@ -1789,9 +1863,11 @@
       transition: background var(--transition-sm), border-color var(--transition-sm);
     }
 
-    .problem-card:hover .problem-card-icon {
-      background: rgba(239, 68, 68, 0.11);
-      border-color: rgba(239, 68, 68, 0.22);
+    @media (hover: hover) {
+      .problem-card:hover .problem-card-icon {
+        background: rgba(239, 68, 68, 0.11);
+        border-color: rgba(239, 68, 68, 0.22);
+      }
     }
 
     .problem-card-title {
@@ -1923,10 +1999,12 @@
         transform    var(--transition-md);
     }
 
-    .sol-card:hover {
-      border-color: rgba(207, 255, 4, 0.30);
-      box-shadow: 0 8px 36px rgba(0,0,0,0.30), 0 0 24px rgba(207,255,4,0.07);
-      transform: translateY(-3px);
+    @media (hover: hover) {
+      .sol-card:hover {
+        border-color: rgba(207, 255, 4, 0.30);
+        box-shadow: 0 8px 36px rgba(0,0,0,0.30), 0 0 24px rgba(207,255,4,0.07);
+        transform: translateY(-3px);
+      }
     }
 
     /* Illustration area */
@@ -1956,8 +2034,10 @@
       transition: transform 0.38s cubic-bezier(0.16,1,0.3,1);
     }
 
-    .sol-card:hover .sol-illus svg {
-      transform: translateY(-3px) scale(1.02);
+    @media (hover: hover) {
+      .sol-card:hover .sol-illus svg {
+        transform: translateY(-3px) scale(1.02);
+      }
     }
 
     .sol-body {
@@ -2058,11 +2138,18 @@
     }
 
     @media (max-width: 599px) {
-      .sol-grid { grid-template-columns: 1fr; }
+      .sol-grid {
+        grid-template-columns: 1fr;
+        margin-bottom: var(--space-10);
+      }
 
       .sol-cta {
         padding: 40px var(--space-6);
         border-radius: var(--radius-container);
+      }
+
+      .sol-cta::after {
+        display: none;
       }
 
       .sol-cta-actions {
@@ -2186,6 +2273,7 @@
       letter-spacing: var(--ls-body);
       max-width: 500px;
       margin: 0 auto var(--space-10);
+      text-wrap: pretty;
     }
 
     .cta-final-actions {
@@ -2275,6 +2363,43 @@
       .cta-final-meta-sep { display: none; }
     }
 
+    /* ── GLOBAL MOBILE OVERRIDES ─────────────── */
+
+    @media (max-width: 599px) {
+      #stack {
+        padding-top: 40px;
+        padding-bottom: 40px;
+      }
+
+      .ben-header .section-desc {
+        font-size: 16px;
+      }
+
+      .stats-grid {
+        margin-top: var(--space-10);
+      }
+
+      .sol-cta-sub {
+        font-size: var(--body-m);
+      }
+
+      .hero-hat-badge {
+        font-size: 10px;
+        padding: 5px 10px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .cta-final-glow {
+        display: none;
+      }
+
+      .eco-container {
+        transform: scale(0.48);
+        margin: -126px auto;
+      }
+    }
+
   </style>
 </head>
 
@@ -2301,7 +2426,7 @@
     </ul>
 
     <div class="navbar-actions" id="navActions">
-      <a href="https://calendly.com/oikoautomation" target="_blank" rel="noopener" class="btn btn-primary btn-sm navbar-cta">
+      <a href="https://calendly.com/izabel-oikoautomation/30min" target="_blank" rel="noopener" class="btn btn-primary btn-sm navbar-cta">
         Agendar Diagnóstico
       </a>
     </div>
@@ -2353,7 +2478,7 @@
           </p>
 
           <div class="hero-actions reveal reveal-delay-3">
-            <a href="https://calendly.com/oikoautomation" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+            <a href="https://calendly.com/izabel-oikoautomation/30min" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
               Agendar Diagnóstico
               <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -2370,46 +2495,49 @@
         <div class="hero-panel-wrap reveal reveal-delay-2" aria-hidden="true">
           <div class="hero-panel">
 
-            <div class="panel-header">
-              <div class="panel-status">
-                <span class="panel-status-dot"></span>
-                <span class="panel-status-label">Sistema ativo</span>
+            <!-- Card 1: status + flow -->
+            <div class="panel-card panel-card--flow">
+              <div class="panel-header">
+                <div class="panel-status">
+                  <span class="panel-status-dot"></span>
+                  <span class="panel-status-label">Sistema ativo</span>
+                </div>
+                <span class="panel-live">
+                  <span class="panel-live-dot"></span>ao vivo
+                </span>
               </div>
-              <span class="panel-live">
-                <span class="panel-live-dot"></span>ao vivo
-              </span>
+              <div class="panel-flow">
+                <div class="flow-node">
+                  <div class="flow-icon">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  </div>
+                  <span>Entrada</span>
+                </div>
+                <span class="flow-arrow">›</span>
+                <div class="flow-node flow-node--ai">
+                  <div class="flow-icon">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  </div>
+                  <span>IA</span>
+                </div>
+                <span class="flow-arrow">›</span>
+                <div class="flow-node">
+                  <div class="flow-icon">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                  </div>
+                  <span>Ação</span>
+                </div>
+                <span class="flow-arrow">›</span>
+                <div class="flow-node flow-node--done">
+                  <div class="flow-icon">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <span>Entregue</span>
+                </div>
+              </div>
             </div>
 
-            <div class="panel-flow">
-              <div class="flow-node">
-                <div class="flow-icon">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-                </div>
-                <span>Entrada</span>
-              </div>
-              <span class="flow-arrow">›</span>
-              <div class="flow-node flow-node--ai">
-                <div class="flow-icon">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                </div>
-                <span>IA</span>
-              </div>
-              <span class="flow-arrow">›</span>
-              <div class="flow-node">
-                <div class="flow-icon">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-                </div>
-                <span>Ação</span>
-              </div>
-              <span class="flow-arrow">›</span>
-              <div class="flow-node flow-node--done">
-                <div class="flow-icon">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                </div>
-                <span>Entregue</span>
-              </div>
-            </div>
-
+            <!-- Card 2: metrics strip (independent floating chips) -->
             <div class="panel-metrics">
               <div class="panel-metric">
                 <span class="metric-val">3.4h</span>
@@ -2425,9 +2553,8 @@
               </div>
             </div>
 
-            <div class="panel-sep"></div>
-
-            <div class="panel-feed">
+            <!-- Card 3: activity feed -->
+            <div class="panel-card">
               <div class="feed-label">Atividade recente</div>
               <div class="feed-item">
                 <span class="feed-dot"></span>
@@ -2856,9 +2983,9 @@
       <div class="sol-cta reveal">
         <span class="sol-cta-label">Próximo passo</span>
         <h3 class="sol-cta-title">Nem toda automação faz sentido<br>para todo negócio.</h3>
-        <p class="sol-cta-sub">Ajudamos você a entender o que vale automatizar primeiro — sem enrolação e sem proposta genérica.</p>
+        <p class="sol-cta-sub">Ajudamos você a entender o que vale automatizar primeiro, sem enrolação e sem proposta genérica.</p>
         <div class="sol-cta-actions">
-          <a href="https://calendly.com/oikoautomation" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+          <a href="https://calendly.com/izabel-oikoautomation/30min" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
             Descobrir qual solução faz sentido
             <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
@@ -2877,23 +3004,19 @@
   ══════════════════════════════════════════ -->
   <section class="section section-alt" id="stack" aria-labelledby="stack-title">
     <div class="container">
-      <!-- Centered header -->
-      <div class="section-header centered reveal">
-        <span class="eyebrow">Integrações e ecossistema</span>
-        <h2 class="section-title reveal reveal-delay-1" id="stack-title">
-          Tecnologia para automatizar<br>o que trava sua operação
-        </h2>
-        <p class="section-desc reveal reveal-delay-2">
-          As nossas soluções conectam atendimento, vendas e operação em um fluxo mais rápido, organizado e inteligente.
-        </p>
-      </div>
-
       <div class="stack-layout">
 
-        <!-- ── ESQUERDA: benefícios ───────────── -->
-        <div class="stack-content">
+        <!-- ── ESQUERDA: header + benefícios ─────── -->
+        <div class="stack-content reveal">
+          <span class="eyebrow">Integrações e ecossistema</span>
+          <h2 class="stack-content-title" id="stack-title">
+            Tecnologia para automatizar o que trava sua operação
+          </h2>
+          <p class="stack-content-desc">
+            As nossas soluções conectam atendimento, vendas e operação em um fluxo mais rápido, organizado e inteligente.
+          </p>
 
-          <ul class="stack-benefits reveal reveal-delay-1">
+          <ul class="stack-benefits">
             <li class="stack-benefit">
               <span class="stack-benefit-icon">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
@@ -3521,7 +3644,7 @@
           </p>
 
           <div class="cta-final-actions">
-            <a href="https://calendly.com/oikoautomation" target="_blank" rel="noopener" class="btn btn-primary btn-lg cta-final-btn">
+            <a href="https://calendly.com/izabel-oikoautomation/30min" target="_blank" rel="noopener" class="btn btn-primary btn-lg cta-final-btn">
               Agendar Diagnóstico
               <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -3535,7 +3658,13 @@
           <div class="cta-final-meta">
             <a href="mailto:contact@oikoautomation.com" class="cta-final-meta-link">contact@oikoautomation.com</a>
             <span class="cta-final-meta-sep" aria-hidden="true">·</span>
-            <a href="https://wa.me/5581325101820" class="cta-final-meta-link" target="_blank" rel="noopener">WhatsApp</a>
+            <a href="https://wa.me/5581996969299" class="cta-final-meta-link" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="flex-shrink:0;opacity:0.65;">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#22c55e"/>
+                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.133.557 4.133 1.527 5.869L0 24l6.282-1.504A11.942 11.942 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.876 9.876 0 01-5.031-1.375l-.36-.214-3.732.894.947-3.642-.235-.374A9.861 9.861 0 012.118 12C2.118 6.527 6.527 2.118 12 2.118S21.882 6.527 21.882 12 17.473 21.882 12 21.882z" fill="#22c55e"/>
+              </svg>
+              WhatsApp: +55 (81) 99696-9299
+            </a>
           </div>
         </div>
 

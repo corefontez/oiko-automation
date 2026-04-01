@@ -213,8 +213,8 @@ ul, ol {
 /* ─── SELEÇÃO ─────────────────────────────── */
 
 ::selection {
-  background: rgba(234, 88, 12, 0.25);
-  color: var(--text-primary);
+  background: rgba(207, 255, 4, 0.22);
+  color: var(--bg-primary);
 }
 
 /* ─── SCROLLBAR ───────────────────────────── */
