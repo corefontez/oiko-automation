@@ -547,7 +547,7 @@
 /* ─── SECTION HEADER ──────────────────────── */
 
 .section-header {
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-10);
 }
 
 .section-header.centered {
@@ -558,7 +558,7 @@
 }
 
 .section-header .eyebrow {
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-5);
 }
 
 .section-header.centered .eyebrow {
@@ -575,7 +575,7 @@
   line-height: var(--lh-h2);
   letter-spacing: var(--ls-h2);
   color: var(--text-primary);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-5);
 }
 
 .section-title .accent {
